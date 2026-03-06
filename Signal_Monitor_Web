@@ -706,11 +706,68 @@ body {
 </head>
 <body>
 
-<!-- CONFIG MODAL -->
-<div class="modal-overlay" id="configModal">
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal" style="display:none;">
+  <div class="modal" style="width:420px;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">&#128646;</div>
+      <h2 style="font-size:22px;margin-bottom:4px;">Welcome back</h2>
+      <p style="margin:0;font-size:13px;">Sign in to your RailSignal account</p>
+    </div>
+    <div class="field-group">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div class="field-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div id="login-error" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);"></div>
+    <div class="modal-actions" style="flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="doLogin()">&#128272; Sign In</button>
+      <button class="btn-demo" onclick="showRegister()">Create new account &#8594;</button>
+      <button class="btn-demo" onclick="loadDemoData()" style="font-size:11px;padding:8px;opacity:0.7;">Continue as Guest (Demo)</button>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal" style="display:none;">
+  <div class="modal" style="width:420px;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">&#128646;</div>
+      <h2 style="font-size:22px;margin-bottom:4px;">Create Account</h2>
+      <p style="margin:0;font-size:13px;">Set up your RailSignal dashboard</p>
+    </div>
+    <div class="field-group">
+      <label>Full Name</label>
+      <input type="text" id="reg-name" placeholder="e.g. Mohamed Azarudeen" />
+    </div>
+    <div class="field-group">
+      <label>Email Address</label>
+      <input type="email" id="reg-email" placeholder="you@example.com" />
+    </div>
+    <div class="field-group">
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="Min 6 characters" />
+    </div>
+    <div class="field-group">
+      <label>Confirm Password</label>
+      <input type="password" id="reg-confirm" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doRegister()" />
+    </div>
+    <div id="reg-error" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);"></div>
+    <div class="modal-actions" style="flex-direction:column;gap:10px;">
+      <button class="btn-primary" onclick="doRegister()">&#9989; Create Account</button>
+      <button class="btn-demo" onclick="showLogin()">&#8592; Back to Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIG MODAL (shown for ⚙️ reconnect when already logged in) -->
+<div class="modal-overlay" id="configModal" style="display:none;">
   <div class="modal">
-    <h2>🛰️ ThinkSpeak Configuration</h2>
-    <p>Enter your ThinkSpeak channel credentials to stream live railway signal data. Your API key is only stored in memory and never sent anywhere except ThinkSpeak.</p>
+    <h2>&#128225; ThinkSpeak Configuration</h2>
+    <p>Enter your ThinkSpeak channel credentials. These are saved to your account automatically.</p>
     <div class="field-group">
       <label>Channel ID</label>
       <input type="text" id="inputChannelId" placeholder="e.g. 2345678" />
@@ -721,14 +778,16 @@ body {
     </div>
     <div class="field-group">
       <label>Number of results to fetch</label>
-      <input type="number" id="inputResults" value="100" min="10" max="8000" />
+      <input type="number" id="inputResults" value="20" min="10" max="8000" />
     </div>
     <div class="modal-actions">
-      <button class="btn-primary" onclick="connectThinkSpeak()">🔗 Connect & Load Data</button>
-      <button class="btn-demo" onclick="loadDemoData()">Demo Mode</button>
+      <button class="btn-primary" onclick="connectThinkSpeak()">&#128279; Connect &amp; Save</button>
+      <button class="btn-demo" onclick="document.getElementById('configModal').style.display='none'">Cancel</button>
     </div>
   </div>
 </div>
+
+<!-- SIDEBAR -->
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -797,12 +856,12 @@ body {
         <div id="avatar-dropdown" class="tb-dropdown" style="display:none;width:220px;right:0;">
           <div style="padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
             <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;">R</div>
-            <div><div style="font-size:13px;font-weight:600;color:var(--white);">Rail Admin</div><div style="font-size:11px;color:var(--muted);">Signal Operator</div></div>
+            <div><div class="avatar-name" style="font-size:13px;font-weight:600;color:var(--white);">Rail Admin</div><div class="avatar-role" style="font-size:11px;color:var(--muted);">Signal Operator</div></div>
           </div>
           <div class="tb-dd-menu-item" onclick="navToPage('settings')">⚙️ Settings</div>
           <div class="tb-dd-menu-item" onclick="navToPage('iot-channels')">📡 IoT Channels</div>
           <div class="tb-dd-menu-item" onclick="document.getElementById('configModal').style.display='flex'">🔗 Reconnect ThinkSpeak</div>
-          <div class="tb-dd-menu-item" style="color:var(--red);border-top:1px solid var(--border);" onclick="showToast('Signed out (demo)')">🚪 Sign Out</div>
+          <div class="tb-dd-menu-item" style="color:var(--red);border-top:1px solid var(--border);" onclick="doSignOut()">🚪 Sign Out</div>
         </div>
       </div>
 
@@ -1041,29 +1100,38 @@ body {
   <!-- PAGE: IOT CHANNELS -->
   <div id="page-iot-channels" class="page-section" style="display:none">
     <div class="page-header">
-      <div><h2>📡 IoT Channels</h2><p>ThinkSpeak channel configuration and connection status</p></div>
-      <button class="refresh-btn" onclick="document.getElementById('configModal').style.display='flex'">⚙️ Reconfigure</button>
+      <div><h2>&#128225; IoT Channels</h2><p>Manage your ThinkSpeak channels — saved to your account</p></div>
+      <button class="refresh-btn" onclick="openAddChannel()">&#xFF0B; Add Channel</button>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>Connection Details</h3><span class="pill green" id="iot-status-chip">Not Connected</span></div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div class="sig-info-row"><span class="sik">Channel ID</span><span class="siv" id="iot-channel-id" style="font-family:monospace">–</span></div>
-          <div class="sig-info-row"><span class="sik">API Key</span><span class="siv" id="iot-api-key" style="font-family:monospace;font-size:11px">–</span></div>
-          <div class="sig-info-row"><span class="sik">Field</span><span class="siv">field1 (Signal Color)</span></div>
-          <div class="sig-info-row"><span class="sik">Refresh Rate</span><span class="siv">Every 15 seconds</span></div>
-          <div class="sig-info-row"><span class="sik">Results</span><span class="siv" id="iot-results">–</span></div>
-          <div class="sig-info-row"><span class="sik">API Host</span><span class="siv" style="font-size:11px;font-family:monospace;color:var(--accent1)">api.thingspeak.com</span></div>
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;">
+      <div class="card">
+        <div class="panel-hdr">
+          <h3>My Channels</h3>
+          <span class="pill" id="iot-ch-count">0 channels</span>
+        </div>
+        <div id="iot-channels-list">
+          <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b style="color:var(--accent1)">+ Add Channel</b> to get started.</div>
         </div>
       </div>
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>How to Connect</h3></div>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--muted);line-height:1.8;">
-          <div style="display:flex;gap:10px;"><span style="color:var(--accent1);font-weight:700;flex-shrink:0;">1.</span><span>Go to <span style="color:var(--accent1)">thingspeak.com</span> → My Channels</span></div>
-          <div style="display:flex;gap:10px;"><span style="color:var(--accent1);font-weight:700;flex-shrink:0;">2.</span><span>Click your channel → note the <b style="color:var(--text)">Channel ID</b></span></div>
-          <div style="display:flex;gap:10px;"><span style="color:var(--accent1);font-weight:700;flex-shrink:0;">3.</span><span>Go to <b style="color:var(--text)">API Keys</b> tab → copy Read API Key</span></div>
-          <div style="display:flex;gap:10px;"><span style="color:var(--accent1);font-weight:700;flex-shrink:0;">4.</span><span>Click ⚙️ top-right or press <b style="color:var(--text)">Reconfigure</b></span></div>
-          <div style="display:flex;gap:10px;"><span style="color:var(--accent1);font-weight:700;flex-shrink:0;">5.</span><span>Ensure field1 sends <b style="color:var(--text)">RED / YELLOW / GREEN</b></span></div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card card-pad">
+          <div class="panel-hdr" style="margin:-20px -22px 14px;padding:14px 20px;"><h3>Active Channel</h3><span class="pill green" id="iot-status-chip">&#8211;</span></div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div class="sig-info-row"><span class="sik">Channel ID</span><span class="siv" id="iot-channel-id" style="font-family:monospace;font-size:12px">&#8211;</span></div>
+            <div class="sig-info-row"><span class="sik">API Key</span><span class="siv" id="iot-api-key" style="font-family:monospace;font-size:11px">&#8211;</span></div>
+            <div class="sig-info-row"><span class="sik">Results</span><span class="siv" id="iot-results">&#8211;</span></div>
+            <div class="sig-info-row"><span class="sik">Refresh</span><span class="siv">Every 5 seconds</span></div>
+            <div class="sig-info-row"><span class="sik">Host</span><span class="siv" style="font-size:11px;color:var(--accent1);font-family:monospace">api.thingspeak.com</span></div>
+          </div>
+        </div>
+        <div class="card card-pad">
+          <div class="panel-hdr" style="margin:-20px -22px 14px;padding:14px 20px;"><h3>How to Connect</h3></div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted);line-height:1.8;">
+            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">1.</span><span>Go to <span style="color:var(--accent1)">thingspeak.com</span> &#8594; My Channels</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">2.</span><span>Note the <b style="color:var(--text)">Channel ID</b></span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">3.</span><span>API Keys tab &#8594; copy Read Key</span></div>
+            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">4.</span><span>field1 must send <b style="color:var(--text)">RED / YELLOW / DOUBLE_YELLOW / GREEN</b></span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1146,7 +1214,7 @@ body {
 ══════════════════════════════════════ */
 let CHANNEL_ID  = '';   // ← YOUR THINGSPEAK CHANNEL ID
 let API_KEY     = '';   // ← YOUR THINGSPEAK READ API KEY
-let RESULTS     = 100;
+let RESULTS     = 20;
 
 /* Normalise raw ThinkSpeak field1 value at ingest time.
    Accepts any casing/spacing variant and returns canonical form. */
@@ -1823,6 +1891,242 @@ function maybeAddCurrentAsChannel() {
     renderChannelList();
   }
 }
+
+/* ══════════════════════════════════════
+   AUTH & PERSISTENCE  (localStorage)
+   Storage:
+     rs_users   → { email: { name, passwordHash, channels[], results } }
+     rs_session → { email, name }
+══════════════════════════════════════ */
+
+function hashPass(p) {
+  var h = 0;
+  for (var i = 0; i < p.length; i++) { h = Math.imul(31, h) + p.charCodeAt(i) | 0; }
+  return 'h' + Math.abs(h).toString(36);
+}
+
+function getUsers()     { try { return JSON.parse(localStorage.getItem('rs_users') || '{}'); }  catch(e) { return {}; } }
+function saveUsers(u)   { localStorage.setItem('rs_users', JSON.stringify(u)); }
+function getSession()   { try { return JSON.parse(localStorage.getItem('rs_session') || 'null'); } catch(e) { return null; } }
+function saveSession(s) { localStorage.setItem('rs_session', JSON.stringify(s)); }
+function clearSession() { localStorage.removeItem('rs_session'); }
+
+function showLogin() {
+  document.getElementById('registerModal').style.display = 'none';
+  document.getElementById('loginModal').style.display    = 'flex';
+}
+function showRegister() {
+  document.getElementById('loginModal').style.display    = 'none';
+  document.getElementById('registerModal').style.display = 'flex';
+}
+function hideAuthModals() {
+  document.getElementById('loginModal').style.display    = 'none';
+  document.getElementById('registerModal').style.display = 'none';
+}
+
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim().toLowerCase();
+  var pass  = document.getElementById('login-password').value;
+  var errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
+  var users = getUsers();
+  var user  = users[email];
+  if (!user || user.passwordHash !== hashPass(pass)) {
+    errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return;
+  }
+  saveSession({ email: email, name: user.name });
+  hideAuthModals();
+  onLoggedIn(email, user);
+}
+
+function doRegister() {
+  var name    = document.getElementById('reg-name').value.trim();
+  var email   = document.getElementById('reg-email').value.trim().toLowerCase();
+  var pass    = document.getElementById('reg-password').value;
+  var confirm = document.getElementById('reg-confirm').value;
+  var errEl   = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!name || !email || !pass) { errEl.textContent = 'All fields are required.'; errEl.style.display = 'block'; return; }
+  if (pass.length < 6)  { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  if (pass !== confirm) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+  var users = getUsers();
+  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
+  users[email] = { name: name, passwordHash: hashPass(pass), channels: [], results: 20 };
+  saveUsers(users);
+  saveSession({ email: email, name: name });
+  hideAuthModals();
+  onLoggedIn(email, users[email]);
+  showToast('Account created! Welcome, ' + name + ' \u2728');
+}
+
+function doSignOut() {
+  clearSession();
+  if (refreshTimer)   clearInterval(refreshTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
+  CHANNEL_ID = ''; API_KEY = '';
+  channels = []; activeChannelIdx = -1;
+  renderChannelList();
+  var ids = ['s-total','s-red','s-yellow','s-green'];
+  ids.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = '\u2013'; });
+  var lbl = document.getElementById('channelLabel');
+  if (lbl) lbl.textContent = 'Not connected';
+  showLogin();
+}
+
+function onLoggedIn(email, user) {
+  // Update topbar & sidebar with real name
+  document.querySelectorAll('.tb-avatar').forEach(function(el) {
+    el.textContent = user.name.charAt(0).toUpperCase();
+  });
+  document.querySelectorAll('.avatar-name').forEach(function(el) { el.textContent = user.name; });
+  document.querySelectorAll('.avatar-role').forEach(function(el) { el.textContent = email; });
+  // Also update sidebar bottom
+  var sidebarName = document.querySelector('.avatar-info .avatar-name');
+  var sidebarRole = document.querySelector('.avatar-info .avatar-role');
+  if (sidebarName) sidebarName.textContent = user.name;
+  if (sidebarRole) sidebarRole.textContent = 'Signal Operator';
+
+  channels = (user.channels || []).map(function(ch) { return Object.assign({}, ch); });
+  RESULTS  = user.results || 20;
+  activeChannelIdx = -1;
+  renderChannelList();
+  updateIotPageInfo();
+
+  if (channels.length > 0) {
+    switchChannel(0);
+  } else {
+    showToast('Welcome ' + user.name + '! Go to IoT Channels to add your ThinkSpeak channel.');
+  }
+}
+
+function saveUserData() {
+  var session = getSession();
+  if (!session) return;
+  var users = getUsers();
+  if (!users[session.email]) return;
+  users[session.email].channels = channels.map(function(ch) { return Object.assign({}, ch); });
+  users[session.email].results  = RESULTS;
+  saveUsers(users);
+}
+
+/* ── Override connectThinkSpeak ──────────────────────────────────────────── */
+function connectThinkSpeak() {
+  var cid  = document.getElementById('inputChannelId').value.trim();
+  var akey = document.getElementById('inputApiKey').value.trim();
+  var res  = parseInt(document.getElementById('inputResults').value) || 20;
+  if (!cid || !akey) { showToast('Please enter Channel ID and API Key'); return; }
+  CHANNEL_ID = cid; API_KEY = akey; RESULTS = res;
+  document.getElementById('configModal').style.display = 'none';
+  var lbl = document.getElementById('channelLabel');
+  if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThinkSpeak IoT \u00b7 field1';
+  maybeAddCurrentAsChannel();
+  saveUserData();
+  fetchData();
+  startAutoRefresh();
+}
+
+/* ── Override saveChannel ────────────────────────────────────────────────── */
+function saveChannel() {
+  var name = document.getElementById('ac-name').value.trim();
+  var cid  = document.getElementById('ac-id').value.trim();
+  var key  = document.getElementById('ac-key').value.trim();
+  var icon = document.getElementById('ac-icon').value.trim() || '\uD83D\uDE86';
+  if (!name || !cid || !key) { showToast('Please fill in all fields'); return; }
+  channels.push({ id: Date.now(), name: name, channelId: cid, apiKey: key, icon: icon });
+  document.getElementById('addChannelModal').style.display = 'none';
+  saveUserData();
+  renderChannelList();
+  updateIotChannelsList();
+  switchChannel(channels.length - 1);
+  showToast('Channel "' + name + '" added and saved!');
+}
+
+/* ── Override deleteChannel ──────────────────────────────────────────────── */
+function deleteChannel(idx) {
+  var name = channels[idx].name;
+  channels.splice(idx, 1);
+  if (activeChannelIdx === idx) {
+    activeChannelIdx = -1; CHANNEL_ID = ''; API_KEY = '';
+    var lbl = document.getElementById('channelLabel');
+    if (lbl) lbl.textContent = 'No channel active \u2014 add a channel';
+    if (channels.length > 0) switchChannel(0);
+  } else if (activeChannelIdx > idx) {
+    activeChannelIdx--;
+  }
+  saveUserData();
+  renderChannelList();
+  updateIotChannelsList();
+  showToast('Channel "' + name + '" removed');
+}
+
+/* ── Override applySettings ──────────────────────────────────────────────── */
+function applySettings() {
+  var cid = document.getElementById('set-channel').value.trim();
+  var key = document.getElementById('set-apikey').value.trim();
+  var res = parseInt(document.getElementById('set-results').value) || 20;
+  if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
+  CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
+  var lbl = document.getElementById('channelLabel');
+  if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThinkSpeak IoT \u00b7 field1';
+  maybeAddCurrentAsChannel();
+  saveUserData();
+  fetchData(); startAutoRefresh();
+  showToast('Settings saved!');
+}
+
+/* ── IoT Channels page ───────────────────────────────────────────────────── */
+function updateIotPageInfo() {
+  setText('iot-channel-id', CHANNEL_ID || '\u2013');
+  setText('iot-api-key', API_KEY ? API_KEY.slice(0, 6) + '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' : '\u2013');
+  setText('iot-results', RESULTS + ' entries');
+  var chip = document.getElementById('iot-status-chip');
+  if (chip) { chip.textContent = CHANNEL_ID ? 'Connected' : 'No Channel'; chip.className = CHANNEL_ID ? 'pill green' : 'pill'; }
+  updateIotChannelsList();
+}
+
+function updateIotChannelsList() {
+  var countEl = document.getElementById('iot-ch-count');
+  if (countEl) countEl.textContent = channels.length + ' channel' + (channels.length !== 1 ? 's' : '');
+  var container = document.getElementById('iot-channels-list');
+  if (!container) return;
+  if (channels.length === 0) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b style="color:var(--accent1)">+ Add Channel</b> to get started.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  channels.forEach(function(ch, i) {
+    var isActive = (i === activeChannelIdx);
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;' + (isActive ? 'background:rgba(79,124,255,0.08);border-left:3px solid var(--accent1);' : 'border-left:3px solid transparent;');
+    var activeBadge = isActive ? '<span style="font-size:10px;background:rgba(34,211,138,0.15);color:var(--green);padding:2px 8px;border-radius:10px;font-weight:600;margin-left:6px;">ACTIVE</span>' : '';
+    div.innerHTML =
+      '<div style="width:40px;height:40px;border-radius:11px;background:rgba(79,124,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">' + ch.icon + '</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-family:Sora,sans-serif;font-weight:700;font-size:14px;color:var(--white);">' + ch.name + activeBadge + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:monospace;">Channel ID: ' + ch.channelId + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button onclick="event.stopPropagation();switchChannel(' + i + ')" style="background:rgba(79,124,255,0.12);border:1px solid rgba(79,124,255,0.3);color:var(--accent1);padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Switch</button>' +
+        '<button onclick="event.stopPropagation();deleteChannel(' + i + ')" style="background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.25);color:var(--red);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Remove</button>' +
+      '</div>';
+    div.onclick = function() { switchChannel(i); };
+    container.appendChild(div);
+  });
+}
+
+/* ── Boot: check existing session ────────────────────────────────────────── */
+function bootAuth() {
+  var session = getSession();
+  if (session) {
+    var users = getUsers();
+    var user  = users[session.email];
+    if (user) { onLoggedIn(session.email, user); return; }
+  }
+  showLogin();
+}
+
+window.addEventListener('DOMContentLoaded', function() { bootAuth(); });
 
 </script>
 
