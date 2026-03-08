@@ -19,11 +19,12 @@ function normaliseRaw(raw) {
 /* ══════════════════════════════════════
    STATE
 ══════════════════════════════════════ */
-let barChartInst   = null;
-let donutChartInst = null;
-let countdown      = 5;
-let countdownTimer = null;
-let refreshTimer   = null;
+let barChartInst     = null;
+let timelineChartInst = null;
+let donutChartInst   = null;
+let countdown        = 5;
+let countdownTimer   = null;
+let refreshTimer     = null;
 
 const meanings = { RED:'STOP', YELLOW:'CAUTION', DOUBLE_YELLOW:'CAUTION AHEAD', GREEN:'PROCEED' };
 
@@ -184,6 +185,9 @@ function renderDashboard(feeds) {
   // Bar chart
   renderBarChart(feeds);
 
+  // Timeline chart (for Timeline page)
+  renderTimelineChart(feeds);
+
   // Donut chart
   renderDonutChart(redC, yelC, grnC);
 
@@ -192,6 +196,7 @@ function renderDashboard(feeds) {
 
   document.getElementById('table-count').textContent = `${total} entries`;
   document.getElementById('chart-range').textContent = `Last ${total} entries`;
+  document.getElementById('timeline-chart-range').textContent = `Last ${total} entries`;
 }
 
 /* ══════════════════════════════════════
@@ -283,6 +288,93 @@ function renderBarChart(feeds) {
   const barThick = feeds.length > 60 ? 5 : feeds.length > 30 ? 8 : 13;
 
   barChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: vals,
+        backgroundColor: colors,
+        borderRadius: 3,
+        borderSkipped: false,
+        barThickness: barThick,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => 'Entry ' + labels[items[0].dataIndex],
+            label: item => {
+              const ns = normaliseSignal(feeds[item.dataIndex].field1) || 'RED';
+              const cfg = SIGNAL_CONFIG[ns];
+              return ' ' + cfg.label + ' — ' + cfg.meaning.split('.')[0];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#6b7a99',
+            font: { size: feeds.length > 50 ? 8 : 10 },
+            maxRotation: 90,
+            autoSkip: true,
+            maxTicksLimit: 20,
+          },
+          grid: { color: 'rgba(255,255,255,0.04)' }
+        },
+        y: {
+          display: false,
+          grid: { display: false },
+          min: 0,
+          max: 1.05
+        }
+      },
+      layout: { padding: { top: 2, bottom: 0 } }
+    }
+  });
+}
+
+/* ══════════════════════════════════════
+   TIMELINE CHART (same as bar chart for Timeline page)
+══════════════════════════════════════ */
+function renderTimelineChart(feeds) {
+  // Check if timelineChart canvas exists (only on Timeline page)
+  const timelineCanvas = document.getElementById('timelineChart');
+  if (!timelineCanvas) return;
+
+  const labels = feeds.map(f => '#'+f.entry_id);
+  const colorMap = { RED:'#ff4d6a', YELLOW:'#fbbf24', GREEN:'#22d38a' };
+
+  // Build a horizontal-stripe canvas pattern for DOUBLE_YELLOW bars
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = 2; tmpCanvas.height = 200;
+  const tmpCtx = tmpCanvas.getContext('2d');
+  tmpCtx.fillStyle = '#fbbf24';
+  tmpCtx.fillRect(0, 0, 2, 85);
+  tmpCtx.fillStyle = '#1a2030';
+  tmpCtx.fillRect(0, 85, 2, 6);
+  tmpCtx.fillStyle = '#fbbf24';
+  tmpCtx.fillRect(0, 91, 2, 85);
+
+  const ctx = timelineCanvas.getContext('2d');
+  const dyPattern = ctx.createPattern(tmpCanvas, 'repeat');
+
+  const colors = feeds.map(f => {
+    const ns = normaliseSignal(f.field1);
+    if (ns === 'DOUBLE_YELLOW') return dyPattern;
+    return colorMap[ns] || '#6b7a99';
+  });
+  const vals = feeds.map(() => 1);
+
+  if (timelineChartInst) timelineChartInst.destroy();
+
+  const barThick = feeds.length > 60 ? 5 : feeds.length > 30 ? 8 : 13;
+
+  timelineChartInst = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
@@ -572,10 +664,23 @@ function toggleDropdown(id) {
   });
 }
 
+function toggleChannelDropdown() {
+  const dropdown = document.getElementById('channel-dropdown');
+  if (!dropdown) return;
+  const isHidden = dropdown.style.display === 'none';
+  if (isHidden) {
+    renderChannelList(); // Refresh list when opening
+  }
+  dropdown.style.display = isHidden ? 'block' : 'none';
+  if (!isHidden) {
+    document.getElementById('avatar-dropdown').style.display = 'none';
+  }
+}
+
 // Close dropdowns on outside click
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.topbar-right')) {
-    ['avatar-dropdown'].forEach(id => {
+    ['avatar-dropdown','channel-dropdown'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });

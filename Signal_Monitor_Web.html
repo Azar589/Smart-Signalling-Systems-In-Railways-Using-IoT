@@ -137,7 +137,7 @@
 
       <!-- Channels btn + dropdown -->
       <div style="position:relative;">
-        <div class="tb-btn" onclick="toggleDropdown('channel-dropdown')" title="Channels" style="width:auto;padding:0 12px;gap:6px;font-size:12px;font-weight:600;color:var(--accent1);border-color:rgba(79,124,255,0.3);">
+        <div class="tb-btn" onclick="toggleChannelDropdown()" title="Channels" style="width:auto;padding:0 12px;gap:6px;font-size:12px;font-weight:600;color:var(--accent1);border-color:rgba(79,124,255,0.3);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           Channels
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="ch-caret"><polyline points="6 9 12 15 18 9"/></svg>
@@ -164,7 +164,6 @@
           </div>
           <div class="tb-dd-menu-item" onclick="navToPage('settings')">⚙️ Settings</div>
           <div class="tb-dd-menu-item" onclick="navToPage('iot-channels')">📡 IoT Channels</div>
-          <div class="tb-dd-menu-item" onclick="document.getElementById('configModal').style.display='flex'">🔗 Reconnect ThinkSpeak</div>
           <div class="tb-dd-menu-item" style="color:var(--red);border-top:1px solid var(--border);" onclick="doSignOut()">🚪 Sign Out</div>
         </div>
       </div>
@@ -474,10 +473,60 @@
 
   <!-- PAGE: TIMELINE -->
   <div id="page-timeline" class="page-section" style="display:none">
-    <div class="page-header"><div><h2>🗓️ Timeline</h2><p>Chronological view of all signal events</p></div></div>
-    <div class="card card-pad">
-      <div id="timeline-list" style="display:flex;flex-direction:column;">
-        <div style="text-align:center;color:var(--muted);padding:40px;">Load data first — configure ThinkSpeak or use Demo mode</div>
+    <div class="page-header"><div><h2>🗓️ Timeline</h2><p>Signal history visualization and definitions</p></div></div>
+    
+    <!-- Signal History Chart -->
+    <div class="card">
+      <div class="panel-hdr">
+        <h3>Signal History — Field1 Timeline</h3>
+        <div class="panel-hdr-right">
+          <span class="pill" id="timeline-chart-range">Last 20 entries</span>
+        </div>
+      </div>
+      <div style="padding:20px;height:250px;position:relative;">
+        <canvas id="timelineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Signal State Definition Cards -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:20px;">
+      <!-- GREEN CARD -->
+      <div style="background:rgba(34,211,138,0.05);border:1px solid rgba(34,211,138,0.2);border-left:4px solid #22d38a;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#5fffa0,#22d38a);box-shadow:0 0 16px rgba(34,211,138,0.4);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">GREEN</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Proceed at speed</div>
+        </div>
+      </div>
+
+      <!-- YELLOW CARD -->
+      <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-left:4px solid #fbbf24;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 16px rgba(251,191,36,0.4);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">YELLOW</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Caution/Prepare</div>
+        </div>
+      </div>
+
+      <!-- RED CARD -->
+      <div style="background:rgba(255,77,106,0.05);border:1px solid rgba(255,77,106,0.2);border-left:4px solid #ff4d6a;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#ff8090,#ff4d6a);box-shadow:0 0 16px rgba(255,77,106,0.4);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">RED</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Stop immediately</div>
+        </div>
+      </div>
+
+      <!-- DOUBLE YELLOW CARD -->
+      <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-left:4px solid #fbbf24;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+          <div style="width:48px;height:22px;border-radius:8px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 14px rgba(251,191,36,0.35);"></div>
+          <div style="width:48px;height:22px;border-radius:8px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 14px rgba(251,191,36,0.35);"></div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">DOUBLE YELLOW</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Caution ahead signal</div>
+        </div>
       </div>
     </div>
   </div>
