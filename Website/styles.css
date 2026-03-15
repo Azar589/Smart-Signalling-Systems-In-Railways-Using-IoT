@@ -8,7 +8,7 @@
   --card2:    #1e2535;
   --border:   rgba(255,255,255,0.06);
   --text:     #e2e8f4;
-  --muted:    #6b7a99;
+  --muted:    #8b9dc3;
   --accent1:  #4f7cff;   /* blue */
   --accent2:  #a855f7;   /* purple */
   --green:    #22d38a;
@@ -255,6 +255,13 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .card-pad { padding: 20px 22px; }
