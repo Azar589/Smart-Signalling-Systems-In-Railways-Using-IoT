@@ -2327,16 +2327,16 @@
 		(uuid "669b4d2c-f1de-48c3-9822-d183edec1ccf")
 	)
 	(no_connect
+		(at 140.97 63.5)
+		(uuid "7f10a533-3313-484e-a13d-922f4e45ef8b")
+	)
+	(no_connect
 		(at 105.41 78.74)
 		(uuid "92f656d9-346e-4cc3-b010-b28e0484c2aa")
 	)
 	(no_connect
 		(at 140.97 66.04)
 		(uuid "9f6a7ea3-b9e3-432b-a1fa-825ab69f0565")
-	)
-	(no_connect
-		(at 140.97 45.72)
-		(uuid "ad69fba1-91d2-43c8-b7a9-d0a04f52979b")
 	)
 	(no_connect
 		(at 140.97 40.64)
@@ -2367,12 +2367,12 @@
 		(uuid "f1f2849e-6d5b-4098-8c44-a7a693f886c4")
 	)
 	(no_connect
-		(at 105.41 73.66)
-		(uuid "f9b141e7-e375-4df2-a025-3e7b293503ef")
+		(at 140.97 60.96)
+		(uuid "f3b8b9eb-a8c3-432a-a068-59a3167ecb05")
 	)
 	(no_connect
-		(at 140.97 71.12)
-		(uuid "fd8714f6-bdba-4de8-8308-75b5b0eba226")
+		(at 105.41 73.66)
+		(uuid "f9b141e7-e375-4df2-a025-3e7b293503ef")
 	)
 	(wire
 		(pts
@@ -2464,7 +2464,17 @@
 		)
 		(uuid "01fdf77a-7d4b-4239-8239-5e01c42e8ea2")
 	)
-	(label "R1"
+	(label "Y1"
+		(at 140.97 50.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "08c0b740-adfa-48da-9935-8cc62eab82c9")
+	)
+	(label "R"
 		(at 140.97 53.34 0)
 		(effects
 			(font
@@ -2484,17 +2494,17 @@
 		)
 		(uuid "2b4c7551-cc15-4b4c-8cf7-a86b0e49644e")
 	)
-	(label "G1"
-		(at 140.97 58.42 0)
+	(label "G"
+		(at 140.97 71.12 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "83881c6a-7b21-4874-8aef-9955853965c4")
+		(uuid "33810cd1-0176-432c-8440-f7155a184ed2")
 	)
-	(label "R"
+	(label "R1"
 		(at 140.97 48.26 0)
 		(effects
 			(font
@@ -2502,7 +2512,17 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "90c587a1-4bc5-4136-8ca0-c7ad513b2bad")
+		(uuid "4f2c6a90-a39b-4efd-abb9-1dcefe4991be")
+	)
+	(label "DAT"
+		(at 140.97 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "9b36ca9f-5a5a-457f-a713-455a4166f38e")
 	)
 	(label "DAT"
 		(at 165.1 44.45 0)
@@ -2524,15 +2544,15 @@
 		)
 		(uuid "ba9a4a78-c88b-494e-9a47-751a81463d65")
 	)
-	(label "G"
-		(at 140.97 63.5 0)
+	(label "G1"
+		(at 140.97 45.72 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "bd7bf08b-9c96-4c48-a790-86d67f6cd42c")
+		(uuid "c330ee2d-6302-4575-acfe-deb0925c622d")
 	)
 	(label "R"
 		(at 91.44 114.3 0)
@@ -2544,17 +2564,7 @@
 		)
 		(uuid "cd5a6cba-5cdb-44ba-8f38-9edd0bf15c3e")
 	)
-	(label "DAT"
-		(at 140.97 50.8 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d13f2b1f-123d-4bac-9229-88dc23a760b6")
-	)
-	(label "Y1"
+	(label "Y"
 		(at 140.97 55.88 0)
 		(effects
 			(font
@@ -2583,16 +2593,6 @@
 			(justify left bottom)
 		)
 		(uuid "f9f65efc-2d6d-4ff1-ad02-d912609d2c92")
-	)
-	(label "Y"
-		(at 140.97 60.96 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "fe1d3329-49e2-45ba-83dc-cba8fa5cb1ee")
 	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
