@@ -5,7 +5,7 @@ let CHANNEL_ID  = '';   // ← YOUR THINGSPEAK CHANNEL ID
 let API_KEY     = '';   // ← YOUR THINGSPEAK READ API KEY
 let RESULTS     = 20;
 
-/* Normalise raw ThinkSpeak field1 value at ingest time.
+/* Normalise raw ThingSpeak field1 value at ingest time.
    Accepts any casing/spacing variant and returns canonical form. */
 function normaliseRaw(raw) {
   const v = (raw || '').toString().toUpperCase().replace(/[_\s-]+/g, '_').trim();
@@ -20,7 +20,6 @@ function normaliseRaw(raw) {
    STATE
 ══════════════════════════════════════ */
 let barChartInst     = null;
-let timelineChartInst = null;
 let donutChartInst   = null;
 let countdown        = 5;
 let countdownTimer   = null;
@@ -40,7 +39,7 @@ function connectThinkSpeak() {
   API_KEY    = akey;
   RESULTS    = res;
   document.getElementById('configModal').style.display = 'none';
-  document.getElementById('channelLabel').textContent = `Channel: ${CHANNEL_ID} · ThinkSpeak IoT · field1`;
+  document.getElementById('channelLabel').textContent = `Channel: ${CHANNEL_ID} · ThingSpeak IoT · field1`;
   fetchData();
   startAutoRefresh();
   maybeAddCurrentAsChannel();
@@ -89,12 +88,12 @@ async function fetchData() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.textContent = '↺ Loading...';
   try {
-    // ThinkSpeak supports CORS — must use https and include the api_key as param
+    // ThingSpeak supports CORS — must use https and include the api_key as param
     const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${API_KEY}&results=${RESULTS}&timezone=Asia%2FKolkata`;
     const res = await fetch(url, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
-      mode: 'cors'          // ThinkSpeak allows CORS from browsers
+      mode: 'cors'          // ThingSpeak allows CORS from browsers
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} — check your Channel ID and API Key`);
     const json = await res.json();
@@ -112,7 +111,7 @@ async function fetchData() {
     }
     renderDashboard(feeds.length ? feeds : getDemoFeeds());
   } catch(e) {
-    console.error('ThinkSpeak fetch error:', e);
+    console.error('ThingSpeak fetch error:', e);
     showToast('❌ ' + e.message + ' — showing last data');
   }
   btn.disabled = false; btn.textContent = '↻ Refresh';
@@ -156,8 +155,6 @@ function renderDashboard(feeds) {
   if (!feeds.length) return;
   lastFeeds = feeds;
   syncSecondaryPages(feeds);
-  lastFeeds = feeds;
-  syncSecondaryPages(feeds);
 
   const total  = feeds.length;
   const redC   = feeds.filter(f=>normaliseSignal(f.field1)==='RED').length;
@@ -177,8 +174,7 @@ function renderDashboard(feeds) {
   document.getElementById('s-yellow-pct').textContent = `${yelPct}% of total`;
   document.getElementById('s-green-pct').textContent = `${grnPct}% of total`;
 
-  // Alert badge
-  document.getElementById('alertCount').textContent = redC;
+
 
   // Progress bars
   document.getElementById('pb-red').style.width    = redPct+'%';
@@ -212,7 +208,33 @@ function renderDashboard(feeds) {
 
   document.getElementById('table-count').textContent = `${total} entries`;
   document.getElementById('chart-range').textContent = `Last ${total} entries`;
-  document.getElementById('timeline-chart-range').textContent = `Last ${total} entries`;
+
+  // Reports chart
+  const rpCtx = document.getElementById('reportChart');
+  if (rpCtx) {
+    if (window._rpChart) window._rpChart.destroy();
+    window._rpChart = new Chart(rpCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['RED — Stop', 'YELLOW — Caution', 'GREEN — Proceed'],
+        datasets: [{
+          data: [redC, yelC, grnC],
+          backgroundColor: ['rgba(255,77,106,0.7)', 'rgba(251,191,36,0.7)', 'rgba(34,211,138,0.7)'],
+          borderColor: ['#ff4d6a', '#fbbf24', '#22d38a'],
+          borderWidth: 2,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#6b7a99' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { ticks: { color: '#6b7a99' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+        }
+      }
+    });
+  }
 }
 
 /* ══════════════════════════════════════
@@ -354,92 +376,6 @@ function renderBarChart(feeds) {
   });
 }
 
-/* ══════════════════════════════════════
-   TIMELINE CHART (same as bar chart for Timeline page)
-══════════════════════════════════════ */
-function renderTimelineChart(feeds) {
-  // Check if timelineChart canvas exists (only on Timeline page)
-  const timelineCanvas = document.getElementById('timelineChart');
-  if (!timelineCanvas) return;
-
-  const labels = feeds.map(f => '#'+f.entry_id);
-  const colorMap = { RED:'#ff4d6a', YELLOW:'#fbbf24', GREEN:'#22d38a' };
-
-  // Build a horizontal-stripe canvas pattern for DOUBLE_YELLOW bars
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = 2; tmpCanvas.height = 200;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  tmpCtx.fillStyle = '#fbbf24';
-  tmpCtx.fillRect(0, 0, 2, 85);
-  tmpCtx.fillStyle = '#1a2030';
-  tmpCtx.fillRect(0, 85, 2, 6);
-  tmpCtx.fillStyle = '#fbbf24';
-  tmpCtx.fillRect(0, 91, 2, 85);
-
-  const ctx = timelineCanvas.getContext('2d');
-  const dyPattern = ctx.createPattern(tmpCanvas, 'repeat');
-
-  const colors = feeds.map(f => {
-    const ns = normaliseSignal(f.field1);
-    if (ns === 'DOUBLE_YELLOW') return dyPattern;
-    return colorMap[ns] || '#6b7a99';
-  });
-  const vals = feeds.map(() => 1);
-
-  if (timelineChartInst) timelineChartInst.destroy();
-
-  const barThick = feeds.length > 60 ? 5 : feeds.length > 30 ? 8 : 13;
-
-  timelineChartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: vals,
-        backgroundColor: colors,
-        borderRadius: 3,
-        borderSkipped: false,
-        barThickness: barThick,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: items => 'Entry ' + labels[items[0].dataIndex],
-            label: item => {
-              const ns = normaliseSignal(feeds[item.dataIndex].field1) || 'RED';
-              const cfg = SIGNAL_CONFIG[ns];
-              return ' ' + cfg.label + ' — ' + cfg.meaning.split('.')[0];
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: '#6b7a99',
-            font: { size: feeds.length > 50 ? 8 : 10 },
-            maxRotation: 90,
-            autoSkip: true,
-            maxTicksLimit: 20,
-          },
-          grid: { color: 'rgba(255,255,255,0.04)' }
-        },
-        y: {
-          display: false,
-          grid: { display: false },
-          min: 0,
-          max: 1.05
-        }
-      },
-      layout: { padding: { top: 2, bottom: 0 } }
-    }
-  });
-}
 
 /* ══════════════════════════════════════
    DONUT CHART
@@ -493,20 +429,27 @@ function renderTable(feeds) {
 /* ══════════════════════════════════════
    AUTO REFRESH
 ══════════════════════════════════════ */
+let AUTO_REFRESH_SEC = 5;
+
 function startAutoRefresh() {
   if (refreshTimer) clearInterval(refreshTimer);
   if (countdownTimer) clearInterval(countdownTimer);
-  refreshTimer = setInterval(() => { fetchData(); }, 5000);
+  
+  const refreshInput = document.getElementById('set-refresh');
+  if (refreshInput) AUTO_REFRESH_SEC = parseInt(refreshInput.value) || 5;
+
+  refreshTimer = setInterval(() => { fetchData(); }, AUTO_REFRESH_SEC * 1000);
   resetCountdown();
 }
 
 function resetCountdown() {
-  countdown = 5;
+  countdown = AUTO_REFRESH_SEC;
   if (countdownTimer) clearInterval(countdownTimer);
+  document.getElementById('countdown').textContent = countdown + 's';
   countdownTimer = setInterval(() => {
     countdown--;
     document.getElementById('countdown').textContent = countdown + 's';
-    if (countdown <= 0) { countdown = 5; }
+    if (countdown <= 0) { countdown = AUTO_REFRESH_SEC; }
   }, 1000);
 }
 /* ══════════════════════════════════════
@@ -518,7 +461,6 @@ const PAGE_TITLES = {
   'iot-channels':   'IoT Channels',
   'signal-log':     'Signal Log',
   'reports':        'Reports',
-  'timeline':       'Timeline',
   'settings':       'Settings',
 };
 
@@ -549,9 +491,7 @@ function navigate(el) {
 function syncSecondaryPages(feeds) {
   if (!feeds.length) return;
   const latest = feeds[feeds.length - 1];
-  const colHex = { RED:'#ff4d6a', DOUBLE_YELLOW:'#fbbf24', YELLOW:'#fbbf24', GREEN:'#22d38a' };
   const colVar = { RED:'var(--red)', DOUBLE_YELLOW:'var(--yellow)', YELLOW:'var(--yellow)', GREEN:'var(--green)' };
-  const msgMap = { RED:'Train Must Halt', DOUBLE_YELLOW:'Caution Ahead', YELLOW:'Reduce Speed', GREEN:'Clear to Proceed' };
   const s = latest.field1;
 
   // Signal Monitor — 4-light tower
@@ -576,74 +516,7 @@ function syncSecondaryPages(feeds) {
   setText('iot-api-key',    API_KEY ? API_KEY.slice(0,6)+'**********' : 'Demo Mode');
   setText('iot-results',    feeds.length + ' entries');
   const iotChip = document.getElementById('iot-status-chip');
-  if (iotChip) { iotChip.textContent = CHANNEL_ID ? 'Connected' : 'Demo Mode'; iotChip.className = 'pill green'; }
-
-  // Signal Log
-  const logBody = document.getElementById('logTableBody');
-  if (logBody) {
-    logBody.innerHTML = '';
-    [...feeds].reverse().forEach((f, i) => {
-      const ns3 = normaliseSignal(f.field1)||'RED';
-      const cfg3 = SIGNAL_CONFIG[ns3];
-      const cls3 = ns3==='GREEN'?'green':ns3==='RED'?'red':'yellow';
-      const tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td><span class="entry-num">#'+f.entry_id+'</span></td>'+
-        '<td><span class="ts-mono">'+f.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,'')+'</span></td>'+
-        '<td><span class="sig-chip '+cls3+'"><span class="sig-dot '+cls3+'"></span>'+cfg3.label+'</span></td>'+
-        '<td style="font-size:12px;color:var(--muted)">'+cfg3.meaning+'</td>'+
-        '<td style="font-size:12px;color:var(--muted)">'+(feeds.length - i)+'</td>';
-      logBody.appendChild(tr);
-    });
-  }
-  setText('log-count', feeds.length + ' entries');
-
-  // Reports
-  const total = feeds.length;
-  const redC  = feeds.filter(f=>normaliseSignal(f.field1)==='RED').length;
-  const yelC  = feeds.filter(f=>{ const n=normaliseSignal(f.field1); return n==='YELLOW'||n==='DOUBLE_YELLOW'; }).length;
-  const grnC  = feeds.filter(f=>normaliseSignal(f.field1)==='GREEN').length;
-  setText('rp-red',        redC,  colVar.RED);
-  setText('rp-yellow',     yelC,  colVar.YELLOW);
-  setText('rp-green',      grnC,  colVar.GREEN);
-  setText('rp-red-pct',    Math.round(redC/total*100)+'%');
-  setText('rp-yellow-pct', Math.round(yelC/total*100)+'%');
-  setText('rp-green-pct',  Math.round(grnC/total*100)+'%');
-  const rpCtx = document.getElementById('reportChart');
-  if (rpCtx) {
-    if (window._rpChart) window._rpChart.destroy();
-    window._rpChart = new Chart(rpCtx.getContext('2d'), {
-      type:'bar',
-      data:{ labels:['RED — Stop','YELLOW — Caution','GREEN — Proceed'],
-             datasets:[{ data:[redC,yelC,grnC], backgroundColor:['rgba(255,77,106,0.7)','rgba(251,191,36,0.7)','rgba(34,211,138,0.7)'], borderColor:['#ff4d6a','#fbbf24','#22d38a'], borderWidth:2, borderRadius:8 }]},
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}} ,
-                scales:{ x:{ticks:{color:'#6b7a99'},grid:{color:'rgba(255,255,255,0.04)'}}, y:{ticks:{color:'#6b7a99'},grid:{color:'rgba(255,255,255,0.04)'}} }}
-    });
-  }
-
-  // Timeline
-  const tl = document.getElementById('timeline-list');
-  if (tl) {
-    tl.innerHTML = '';
-    feeds.forEach((f, i) => {
-      const isLast = i === feeds.length - 1;
-      const div = document.createElement('div');
-      div.style.cssText = 'display:flex;gap:16px;';
-      div.innerHTML =
-        '<div style="display:flex;flex-direction:column;align-items:center;">'+
-          '<div style="width:14px;height:14px;border-radius:50%;background:'+({RED:'#ff4d6a',DOUBLE_YELLOW:'#fbbf24',YELLOW:'#fbbf24',GREEN:'#22d38a'}[normaliseSignal(f.field1)]||'#ff4d6a')+';box-shadow:0 0 8px '+({RED:'#ff4d6a',DOUBLE_YELLOW:'#fbbf24',YELLOW:'#fbbf24',GREEN:'#22d38a'}[normaliseSignal(f.field1)]||'#ff4d6a')+';flex-shrink:0;margin-top:3px;"></div>'+
-          (isLast?'':'<div style="width:2px;flex:1;background:rgba(255,255,255,0.06);margin:4px 0;min-height:28px;"></div>')+
-        '</div>'+
-        '<div style="flex:1;padding-bottom:'+(isLast?'0':'18px')+';border-bottom:'+(isLast?'none':'1px solid rgba(255,255,255,0.04)')+';">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">'+
-            '<span style="font-family:Sora,sans-serif;font-weight:700;font-size:13px;color:'+colHex[f.field1]+'">'+f.field1+' — '+(msgMap[f.field1]||'')+'</span>'+
-            '<span style="font-size:11px;color:var(--muted);font-family:monospace">Entry #'+f.entry_id+'</span>'+
-          '</div>'+
-          '<div style="font-size:11px;color:var(--muted);">'+f.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,'')+'</div>'+
-        '</div>';
-      tl.appendChild(div);
-    });
-  }
+  if (iotChip) { iotChip.textContent = CHANNEL_ID ? 'Live' : 'Demo'; iotChip.className = 'pill ' + (CHANNEL_ID ? 'green' : 'yellow'); }
 }
 
 function setText(id, val, color) {
@@ -659,7 +532,7 @@ function applySettings() {
   const res = parseInt(document.getElementById('set-results').value) || 20;
   if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
   CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
-  document.getElementById('channelLabel').textContent = 'Channel: '+CHANNEL_ID+' · ThinkSpeak IoT · field1';
+  document.getElementById('channelLabel').textContent = 'Channel: '+CHANNEL_ID+' · ThingSpeak IoT · field1';
   fetchData(); startAutoRefresh();
   showToast('Settings saved! Fetching data...');
 }
@@ -680,18 +553,64 @@ function toggleDropdown(id) {
   });
 }
 
-function toggleChannelDropdown() {
-  const dropdown = document.getElementById('channel-dropdown');
-  if (!dropdown) return;
-  const isHidden = dropdown.style.display === 'none';
-  if (isHidden) {
-    renderChannelList(); // Refresh list when opening
-  }
-  dropdown.style.display = isHidden ? 'block' : 'none';
-  if (!isHidden) {
-    document.getElementById('avatar-dropdown').style.display = 'none';
-  }
+function openChannelModal() {
+  renderChannelModal();
+  document.getElementById('channelSwitcherModal').style.display = 'flex';
+  // close avatar dropdown if open
+  const av = document.getElementById('avatar-dropdown');
+  if (av) av.style.display = 'none';
 }
+
+function closeChannelModal() {
+  document.getElementById('channelSwitcherModal').style.display = 'none';
+}
+
+function renderChannelModal() {
+  const list    = document.getElementById('ch-modal-list');
+  const counter = document.getElementById('ch-modal-count');
+  if (!list) return;
+
+  // Update subtitle count
+  if (counter) {
+    counter.textContent = channels.length
+      ? channels.length + ' channel' + (channels.length !== 1 ? 's' : '') + ' saved'
+      : 'No channels added yet';
+  }
+
+  if (channels.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">No channels yet — add one below</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  channels.forEach(function(ch, i) {
+    const isActive = i === activeChannelIdx;
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;transition:background 0.15s;border:1px solid ' + (isActive ? 'rgba(79,124,255,0.35)' : 'rgba(255,255,255,0.05)') + ';background:' + (isActive ? 'rgba(79,124,255,0.1)' : 'rgba(255,255,255,0.03)') + ';';
+    row.onmouseover = function() { if (!isActive) this.style.background = 'rgba(255,255,255,0.06)'; };
+    row.onmouseout  = function() { if (!isActive) this.style.background = 'rgba(255,255,255,0.03)'; };
+
+    row.innerHTML =
+      // Icon
+      '<div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">' + ch.icon + '</div>' +
+      // Info
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + ch.name + '</div>' +
+        '<div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:monospace;">ID: ' + ch.channelId + '</div>' +
+      '</div>' +
+      // Active badge
+      (isActive ? '<div style="font-size:10px;font-weight:700;letter-spacing:0.5px;padding:3px 9px;border-radius:20px;background:rgba(79,124,255,0.2);color:var(--accent1);border:1px solid rgba(79,124,255,0.3);">ACTIVE</div>' : '') +
+      // Switch btn
+      (!isActive ? '<button onclick="event.stopPropagation();switchChannel(' + i + ');closeChannelModal();" style="font-size:11px;font-weight:600;padding:5px 13px;border-radius:8px;background:var(--accent1);color:#fff;border:none;cursor:pointer;transition:opacity 0.15s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">Switch</button>' : '') +
+      // Delete btn
+      '<button onclick="event.stopPropagation();deleteChannel(' + i + ');renderChannelModal();" style="font-size:12px;padding:5px 10px;border-radius:8px;background:rgba(255,77,106,0.1);color:var(--red);border:1px solid rgba(255,77,106,0.2);cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background=\'rgba(255,77,106,0.22)\'" onmouseout="this.style.background=\'rgba(255,77,106,0.1)\'">✕</button>';
+
+    list.appendChild(row);
+  });
+}
+
+function toggleChannelDropdown() { openChannelModal(); } // legacy alias
+
 
 // Close dropdowns on outside click
 document.addEventListener('click', function(e) {

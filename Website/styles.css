@@ -30,6 +30,32 @@ body {
   overflow-x: hidden;
 }
 
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+  
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
 /* ══════════════════════════════════════
    SIDEBAR
 ══════════════════════════════════════ */
@@ -160,7 +186,7 @@ body {
 
 .topbar-title {
   font-family: 'Sora', sans-serif;
-  font-size: 15px; font-weight: 700;
+  font-size: 18px; font-weight: 700;
   color: var(--white);
 }
 
@@ -227,7 +253,7 @@ body {
   font-size: 20px; font-weight: 700; color: var(--white);
 }
 
-.page-header p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.page-header p { font-size: 13px; color: var(--muted); margin-top: 6px; }
 
 .refresh-btn {
   display: flex; align-items: center; gap: 6px;

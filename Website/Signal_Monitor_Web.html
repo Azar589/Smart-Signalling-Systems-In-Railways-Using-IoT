@@ -1,1538 +1,1850 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Railway Signal � IoT Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="stylesheet" href="styles.css">
-<script src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Railway Signal � IoT Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
+
 <body>
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="loginModal" style="display:none;">
-  <div class="modal" style="width:420px;">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">&#128646;</div>
-      <h2 style="font-size:22px;margin-bottom:4px;">Welcome back</h2>
-      <p style="margin:0;font-size:13px;">Sign in to your RailSignal account</p>
-    </div>
-    <div class="field-group">
-      <label>Email Address</label>
-      <input type="email" id="login-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()" />
-    </div>
-    <div class="field-group">
-      <label>Password</label>
-      <div style="position:relative;display:flex;align-items:center;">
-        <input type="password" id="login-password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:40px;" />
-        <span onclick="togglePasswordVisibility('login-password', this)" style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;" title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+  <!-- LOGIN MODAL -->
+  <div class="modal-overlay" id="loginModal" style="display:none;">
+    <div class="modal" style="width:420px;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div
+          style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">
+          &#128646;</div>
+        <h2 style="font-size:22px;margin-bottom:4px;">Welcome back</h2>
+        <p style="margin:0;font-size:13px;">Sign in to your RailSignal account</p>
       </div>
-    </div>
-    <div id="login-error" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);"></div>
-    <div class="modal-actions" style="flex-direction:column;gap:10px;">
-      <button class="btn-primary" onclick="doLogin()">&#128272; Sign In</button>
-      <button class="btn-demo" onclick="showRegister()">Create new account &#8594;</button>
-      <button class="btn-demo" onclick="loadDemoData()" style="font-size:11px;padding:8px;opacity:0.7;">Continue as Guest (Demo)</button>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTER MODAL -->
-<div class="modal-overlay" id="registerModal" style="display:none;">
-  <div class="modal" style="width:420px;">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">&#128646;</div>
-      <h2 style="font-size:22px;margin-bottom:4px;">Create Account</h2>
-      <p style="margin:0;font-size:13px;">Set up your RailSignal dashboard</p>
-    </div>
-    <div class="field-group">
-      <label>Full Name</label>
-      <input type="text" id="reg-name" placeholder="e.g. Mohamed Azarudeen" />
-    </div>
-    <div class="field-group">
-      <label>Email Address</label>
-      <input type="email" id="reg-email" placeholder="you@example.com" />
-    </div>
-    <div class="field-group">
-      <label>Password</label>
-      <div style="position:relative;display:flex;align-items:center;">
-        <input type="password" id="reg-password" placeholder="Min 6 characters" style="padding-right:40px;" />
-        <span onclick="togglePasswordVisibility('reg-password', this)" style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;" title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
+      <div class="field-group">
+        <label>Email Address</label>
+        <input type="email" id="login-email" placeholder="you@example.com"
+          onkeydown="if(event.key==='Enter')doLogin()" />
       </div>
-    </div>
-    <div class="field-group">
-      <label>Confirm Password</label>
-      <div style="position:relative;display:flex;align-items:center;">
-        <input type="password" id="reg-confirm" placeholder="Repeat password" onkeydown="if(event.key==='Enter')doRegister()" style="padding-right:40px;" />
-        <span onclick="togglePasswordVisibility('reg-confirm', this)" style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;" title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
-      </div>
-    </div>
-    <div id="reg-error" style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);"></div>
-    <div class="modal-actions" style="flex-direction:column;gap:10px;">
-      <button class="btn-primary" onclick="doRegister()">&#9989; Create Account</button>
-      <button class="btn-demo" onclick="showLogin()">&#8592; Back to Sign In</button>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIG MODAL (shown for ⚙️ reconnect when already logged in) -->
-<div class="modal-overlay" id="configModal" style="display:none;">
-  <div class="modal">
-    <h2>&#128225; ThinkSpeak Configuration</h2>
-    <p>Enter your ThinkSpeak channel credentials. These are saved to your account automatically.</p>
-    <div class="field-group">
-      <label>Channel ID</label>
-      <input type="text" id="inputChannelId" placeholder="e.g. 2345678" />
-    </div>
-    <div class="field-group">
-      <label>Read API Key</label>
-      <input type="text" id="inputApiKey" placeholder="e.g. ABCDEF1234567890" />
-    </div>
-    <div class="field-group">
-      <label>Number of results to fetch</label>
-      <input type="number" id="inputResults" value="20" min="10" max="8000" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="connectThinkSpeak()">&#128279; Connect &amp; Save</button>
-      <button class="btn-demo" onclick="document.getElementById('configModal').style.display='none'">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- SIDEBAR -->
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-icon">🚆</div>
-    <div class="logo-text">RailSignal</div>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">Main</div>
-    <div class="nav-item active" data-page="dashboard" onclick="navigate(this)"><span class="nav-icon">📊</span> Dashboard</div>
-    <div class="nav-item" data-page="signal-monitor" onclick="navigate(this)"><span class="nav-icon">🚦</span> Signal Monitor</div>
-    <div class="nav-item" data-page="iot-channels" onclick="navigate(this)"><span class="nav-icon">📡</span> IoT Channels</div>
-    <div class="nav-item" data-page="signal-log" onclick="navigate(this)"><span class="nav-icon">📋</span> Signal Log <span class="nav-badge" id="alertCount">0</span></div>
-    <div class="nav-section-label">Analytics</div>
-    <div class="nav-item" data-page="reports" onclick="navigate(this)"><span class="nav-icon">📈</span> Reports</div>
-    <div class="nav-item" data-page="timeline" onclick="navigate(this)"><span class="nav-icon">🗓️</span> Timeline</div>
-    <div class="nav-item" data-page="settings" onclick="navigate(this)"><span class="nav-icon">⚙️</span> Settings</div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="avatar">R</div>
-    <div class="avatar-info">
-      <div class="avatar-name">Rail Admin</div>
-      <div class="avatar-role">Signal Operator</div>
-    </div>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<div class="main">
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="search-box">
-      <span style="color:var(--muted)">🔍</span>
-      <input type="text" placeholder="Search entries, signals..." />
-    </div>
-    <div class="topbar-right" style="position:relative;">
-
-      <!-- Settings btn -->
-      <div class="tb-btn" onclick="navToSettings()" title="Settings">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </div>
-
-      <!-- Channels btn + dropdown -->
-      <div style="position:relative;">
-        <div class="tb-btn" onclick="toggleChannelDropdown()" title="Channels" style="width:auto;padding:0 12px;gap:6px;font-size:12px;font-weight:600;color:var(--accent1);border-color:rgba(79,124,255,0.3);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          Channels
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="ch-caret"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div id="channel-dropdown" class="tb-dropdown" style="display:none;width:320px;right:0;">
-          <div class="tb-dd-header">
-            <span>📡 My Channels</span>
-            <div class="ch-add-btn" onclick="openAddChannel()">+ Add</div>
-          </div>
-          <div id="channel-list" style="max-height:320px;overflow-y:auto;">
-            <div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">No channels yet — click + Add</div>
-          </div>
-          <div class="tb-dd-footer" onclick="openAddChannel()">＋ Add New Channel</div>
+      <div class="field-group">
+        <label>Password</label>
+        <div style="position:relative;display:flex;align-items:center;">
+          <input type="password" id="login-password" placeholder="Your password"
+            onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:40px;" />
+          <span onclick="togglePasswordVisibility('login-password', this)"
+            style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;"
+            title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg></span>
         </div>
       </div>
-
-      <!-- Avatar + dropdown -->
-      <div style="position:relative;">
-        <div class="tb-avatar" onclick="toggleDropdown('avatar-dropdown')" title="Profile" style="cursor:pointer;">R</div>
-        <div id="avatar-dropdown" class="tb-dropdown" style="display:none;width:220px;right:0;">
-          <div style="padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;">R</div>
-            <div><div class="avatar-name" style="font-size:13px;font-weight:600;color:var(--white);">Rail Admin</div><div class="avatar-role" style="font-size:11px;color:var(--muted);">Signal Operator</div></div>
-          </div>
-          <div class="tb-dd-menu-item" onclick="navToPage('settings')">⚙️ Settings</div>
-          <div class="tb-dd-menu-item" onclick="navToPage('iot-channels')">📡 IoT Channels</div>
-          <div class="tb-dd-menu-item" style="color:var(--red);border-top:1px solid var(--border);" onclick="doSignOut()">🚪 Sign Out</div>
-        </div>
+      <div id="login-error"
+        style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);">
       </div>
-
+      <div class="modal-actions" style="flex-direction:column;gap:10px;">
+        <button class="btn-primary" onclick="doLogin()">&#128272; Sign In</button>
+        <button class="btn-demo" onclick="showRegister()">Create new account &#8594;</button>
+        <button class="btn-demo" onclick="loadDemoData()" style="font-size:11px;padding:8px;opacity:0.7;">Continue as
+          Guest (Demo)</button>
+      </div>
     </div>
   </div>
 
-  <!-- CONTENT -->
-  <div class="content">
-
-  <div id="page-dashboard" class="page-section">
-    <!-- PAGE HEADER -->
-    <div class="page-header">
-      <div>
-        <h2>Railway Signalling · IoT Monitor</h2>
-        <p id="channelLabel">Not connected — use ⚙️ to configure ThinkSpeak</p>
+  <!-- REGISTER MODAL -->
+  <div class="modal-overlay" id="registerModal" style="display:none;">
+    <div class="modal" style="width:420px;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div
+          style="width:54px;height:54px;background:linear-gradient(135deg,var(--accent1),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px;">
+          &#128646;</div>
+        <h2 style="font-size:22px;margin-bottom:4px;">Create Account</h2>
+        <p style="margin:0;font-size:13px;">Set up your RailSignal dashboard</p>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="live-pulse"><div class="live-dot-anim"></div>LIVE</div>
-        <div class="countdown-badge" title="Auto-refreshes every 5 seconds">⟳ <span id="countdown">5s</span></div>
-        <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">↻ Refresh</button>
+      <div class="field-group">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="e.g. Mohamed Azarudeen" />
       </div>
-    </div>
-
-    <!-- ROW 1: STAT CARDS -->
-    <div class="grid-4">
-      <div class="stat-card" style="animation-delay:0.05s">
-        <div class="stat-header">
-          <div class="stat-icon blue">📡</div>
-          <div class="stat-menu">⋮</div>
+      <div class="field-group">
+        <label>Email Address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <div style="position:relative;display:flex;align-items:center;">
+          <input type="password" id="reg-password" placeholder="Min 6 characters" style="padding-right:40px;" />
+          <span onclick="togglePasswordVisibility('reg-password', this)"
+            style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;"
+            title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg></span>
         </div>
-        <div class="stat-value" id="s-total">–</div>
-        <div class="stat-label">Total Entries</div>
-        <div class="stat-change up">↑ <span id="s-total-sub">Fetched from ThinkSpeak</span></div>
       </div>
-
-      <div class="stat-card" style="animation-delay:0.10s">
-        <div class="stat-header">
-          <div class="stat-icon red">🔴</div>
-          <div class="stat-menu">⋮</div>
+      <div class="field-group">
+        <label>Confirm Password</label>
+        <div style="position:relative;display:flex;align-items:center;">
+          <input type="password" id="reg-confirm" placeholder="Repeat password"
+            onkeydown="if(event.key==='Enter')doRegister()" style="padding-right:40px;" />
+          <span onclick="togglePasswordVisibility('reg-confirm', this)"
+            style="position:absolute;right:12px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;user-select:none;"
+            title="Show Password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg></span>
         </div>
-        <div class="stat-value" id="s-red" style="color:var(--red)">–</div>
-        <div class="stat-label">RED — STOP</div>
-        <div class="stat-change down">⬤ <span id="s-red-pct">–% of total</span></div>
       </div>
-
-      <div class="stat-card" style="animation-delay:0.15s">
-        <div class="stat-header">
-          <div class="stat-icon yellow">🟡</div>
-          <div class="stat-menu">⋮</div>
-        </div>
-        <div class="stat-value" id="s-yellow" style="color:var(--yellow)">–</div>
-        <div class="stat-label">YELLOW / DBL YELLOW</div>
-        <div class="stat-change" style="color:var(--yellow)">⬤ <span id="s-yellow-pct">–% of total</span></div>
+      <div id="reg-error"
+        style="color:var(--red);font-size:12px;margin-bottom:12px;display:none;padding:9px 13px;background:rgba(255,77,106,0.1);border-radius:8px;border:1px solid rgba(255,77,106,0.2);">
       </div>
-
-      <div class="stat-card" style="animation-delay:0.20s">
-        <div class="stat-header">
-          <div class="stat-icon green">🟢</div>
-          <div class="stat-menu">⋮</div>
-        </div>
-        <div class="stat-value" id="s-green" style="color:var(--green)">–</div>
-        <div class="stat-label">GREEN — PROCEED</div>
-        <div class="stat-change up">⬤ <span id="s-green-pct">–% of total</span></div>
+      <div class="modal-actions" style="flex-direction:column;gap:10px;">
+        <button class="btn-primary" onclick="doRegister()">&#9989; Create Account</button>
+        <button class="btn-demo" onclick="showLogin()">&#8592; Back to Sign In</button>
       </div>
     </div>
+  </div>
 
-    <!-- ROW 2: CHART + SIGNAL TOWER -->
-    <div class="grid-2-1">
-
-      <!-- BAR CHART -->
-      <div class="card">
-        <div class="panel-hdr">
-          <h3>Signal History — Field1 Timeline</h3>
-          <div class="panel-hdr-right">
-            <span class="pill" id="chart-range">Last 20 entries</span>
-          </div>
-        </div>
-        <div style="padding:16px 20px 0;height:200px;position:relative;">
-          <canvas id="barChart"></canvas>
-        </div>
-</div>
-
-      <!-- SIGNAL TOWER -->
-      <div class="card">
-        <div class="panel-hdr">
-          <h3>Live Signal State</h3>
-          <span class="pill green" id="current-chip">–</span>
-        </div>
-        <div class="signal-tower-wrap">
-          <div style="display:flex;flex-direction:column;align-items:center;">
-            <div class="signal-housing">
-              <div class="sig-light" id="light-dyellow-top"></div>
-              <div class="sig-light" id="light-green"></div>
-              <div class="sig-light" id="light-yellow"></div>
-              <div class="sig-light" id="light-red"></div>
-            </div>
-            <div class="mast"></div>
-            <div class="mast-foot"></div>
-          </div>
-        </div>
-        <div class="signal-info">
-          <div class="sig-info-row"><span class="sik">State</span><span class="siv" id="ci-state">–</span></div>
-          <div class="sig-info-row"><span class="sik">Meaning</span><span class="siv" id="ci-meaning">–</span></div>
-          <div class="sig-info-row"><span class="sik">Entry #</span><span class="siv" id="ci-entry">–</span></div>
-          <div class="sig-info-row"><span class="sik">Timestamp</span><span class="siv" id="ci-time" style="font-size:11px">–</span></div>
-        </div>
+  <!-- CONFIG MODAL (shown for ⚙️ reconnect when already logged in) -->
+  <div class="modal-overlay" id="configModal" style="display:none;">
+    <div class="modal">
+      <h2>&#128225; ThingSpeak Configuration</h2>
+      <p>Enter your ThingSpeak channel credentials. These are saved to your account automatically.</p>
+      <div class="field-group">
+        <label>Channel ID</label>
+        <input type="text" id="inputChannelId" placeholder="e.g. 2345678" />
+      </div>
+      <div class="field-group">
+        <label>Read API Key</label>
+        <input type="text" id="inputApiKey" placeholder="e.g. ABCDEF1234567890" />
+      </div>
+      <div class="field-group">
+        <label>Number of results to fetch</label>
+        <input type="number" id="inputResults" value="20" min="10" max="8000" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="connectThingSpeak()">&#128279; Connect &amp; Save</button>
+        <button class="btn-demo" onclick="document.getElementById('configModal').style.display='none'">Cancel</button>
       </div>
     </div>
+  </div>
 
-    <!-- ROW 3: TABLE + DONUT -->
-    <div class="grid-2-1">
-
-      <!-- TABLE -->
-      <div class="card">
-        <div class="panel-hdr">
-          <h3>Signal Log — Recent Entries</h3>
-          <span class="pill" id="table-count">0 entries</span>
-        </div>
-        <div style="overflow-x:auto;max-height:320px;overflow-y:auto;">
-          <table class="signal-table">
-            <thead>
-              <tr>
-                <th>Entry</th>
-                <th>Timestamp</th>
-                <th>Signal</th>
-                <th>Meaning</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-              <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:30px;">No data — configure ThinkSpeak or use Demo mode</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- DONUT + PROGRESS -->
-      <div class="card">
-        <div class="panel-hdr"><h3>Signal Distribution</h3></div>
-        <div class="donut-wrap">
-          <div class="donut-canvas-wrap">
-            <canvas id="donutChart"></canvas>
-            <div class="donut-label">
-              <div class="donut-pct" id="donut-pct">–</div>
-              <div class="donut-sub">Red %</div>
-            </div>
-          </div>
-          <div class="donut-legend">
-            <div class="dl-item">
-              <div class="dl-dot" style="background:var(--red)"></div>
-              <div class="dl-label">RED</div>
-              <div class="dl-val" id="dl-red">–</div>
-            </div>
-            <div class="dl-item">
-              <div class="dl-dot" style="background:var(--yellow)"></div>
-              <div class="dl-label">YELLOW</div>
-              <div class="dl-val" id="dl-yellow">–</div>
-            </div>
-            <div class="dl-item">
-              <div class="dl-dot" style="background:var(--green)"></div>
-              <div class="dl-label">GREEN</div>
-              <div class="dl-val" id="dl-green">–</div>
-            </div>
-          </div>
-        </div>
-        <div class="prog-section">
-          <div class="prog-row">
-            <div class="prog-meta"><span class="prog-name">🔴 STOP (Red)</span><span class="prog-pct" id="pp-red">0%</span></div>
-            <div class="prog-bar-track"><div class="prog-bar-fill" id="pb-red" style="width:0%;background:var(--red)"></div></div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-meta"><span class="prog-name">🟡 CAUTION (Yellow)</span><span class="prog-pct" id="pp-yellow">0%</span></div>
-            <div class="prog-bar-track"><div class="prog-bar-fill" id="pb-yellow" style="width:0%;background:var(--yellow)"></div></div>
-          </div>
-          <div class="prog-row">
-            <div class="prog-meta"><span class="prog-name">🟢 PROCEED (Green)</span><span class="prog-pct" id="pp-green">0%</span></div>
-            <div class="prog-bar-track"><div class="prog-bar-fill" id="pb-green" style="width:0%;background:var(--green)"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /page-dashboard -->
-
-  <!-- PAGE: SIGNAL MONITOR -->
-  <div id="page-signal-monitor" class="page-section" style="display:none">
-    <div class="page-header"><div><h2>🚦 Signal Monitor</h2><p>Real-time live signal state from ThinkSpeak field1</p></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>Current Active Signal</h3><span class="pill" id="sm-chip">–</span></div>
-        <div style="display:flex;justify-content:center;padding:20px 0 10px;">
+  <!-- CHANNEL SWITCHER MODAL -->
+  <div class="modal-overlay" id="channelSwitcherModal" style="display:none;"
+    onclick="if(event.target===this)closeChannelModal()">
+    <div class="modal" style="width:460px;padding:0;overflow:hidden;">
+      <!-- Header -->
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div
+            style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:15px;">
+            📡</div>
           <div>
-            <div style="width:88px;background:#050608;border:3px solid #111;border-radius:44px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 8px 40px rgba(0,0,0,0.8),inset 0 0 20px rgba(0,0,0,0.6);margin:0 auto;">
-              <div id="sm-light-dyellow"    class="sig-light" style="width:42px;height:42px;"></div>
-              <div id="sm-light-green"      class="sig-light" style="width:42px;height:42px;"></div>
-              <div id="sm-light-yellow"     class="sig-light" style="width:42px;height:42px;"></div>
-              <div id="sm-light-red"        class="sig-light" style="width:42px;height:42px;"></div>
+            <div style="font-size:15px;font-weight:700;color:var(--white);font-family:'Sora',sans-serif;">Switch Channel
             </div>
-            <div style="width:6px;height:40px;background:rgba(255,255,255,0.1);margin:0 auto;"></div>
-            <div style="width:50px;height:9px;background:rgba(255,255,255,0.08);border-radius:0 0 6px 6px;margin:0 auto;"></div>
-          </div>
-        </div>
-        <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px;">
-          <div class="sig-info-row"><span class="sik">Signal</span><span class="siv" id="sm-state" style="font-size:22px;">–</span></div>
-          <div class="sig-info-row"><span class="sik">Meaning</span><span class="siv" id="sm-meaning">–</span></div>
-          <div class="sig-info-row"><span class="sik">Entry</span><span class="siv" id="sm-entry">–</span></div>
-          <div class="sig-info-row"><span class="sik">Timestamp</span><span class="siv" id="sm-time" style="font-size:11px">–</span></div>
-        </div>
-      </div>
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>Signal Meaning Guide</h3></div>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-          <div style="background:rgba(34,211,138,0.08);border:1px solid rgba(34,211,138,0.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#5fffa0,#22d38a);box-shadow:0 0 14px #22d38a;flex-shrink:0;"></div>
-            <div><div style="font-family:'Sora',sans-serif;font-weight:700;font-size:13px;color:var(--green)">GREEN — PROCEED</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Proceed at authorised speed.</div></div>
-          </div>
-          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
-            <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-              <div style="width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 12px #fbbf24;"></div>
-              <div style="width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 12px #fbbf24;"></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px;" id="ch-modal-count">No channels added yet
             </div>
-            <div><div style="font-family:'Sora',sans-serif;font-weight:700;font-size:13px;color:var(--yellow)">DOUBLE YELLOW / DBL YELLOW</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Proceed prepared to find the next signal at Caution.</div></div>
-          </div>
-          <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 12px #fbbf24;flex-shrink:0;"></div>
-            <div><div style="font-family:'Sora',sans-serif;font-weight:700;font-size:13px;color:var(--yellow)">YELLOW / DBL YELLOW</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Expect next signal at STOP. Prepare to stop.</div></div>
-          </div>
-          <div style="background:rgba(255,77,106,0.08);border:1px solid rgba(255,77,106,0.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
-            <div style="width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ff8090,#ff4d6a);box-shadow:0 0 14px #ff4d6a;flex-shrink:0;"></div>
-            <div><div style="font-family:'Sora',sans-serif;font-weight:700;font-size:13px;color:var(--red)">RED — STOP</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">STOP the train prior to the signal.</div></div>
           </div>
         </div>
+        <div onclick="closeChannelModal()"
+          style="cursor:pointer;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:16px;transition:background 0.15s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+          onmouseout="this.style.background='rgba(255,255,255,0.06)'">✕</div>
+      </div>
+      <!-- Channel List -->
+      <div id="ch-modal-list"
+        style="max-height:360px;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">No channels yet — add one below
+        </div>
+      </div>
+      <!-- Footer -->
+      <div
+        style="padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:11px;color:var(--muted);">Click a channel to switch instantly</span>
+        <button class="btn-primary" onclick="closeChannelModal();openAddChannel();"
+          style="padding:8px 16px;font-size:12px;">＋ Add Channel</button>
       </div>
     </div>
   </div>
 
-  <!-- PAGE: IOT CHANNELS -->
-  <div id="page-iot-channels" class="page-section" style="display:none">
-    <div class="page-header">
-      <div><h2>&#128225; IoT Channels</h2><p>Manage your ThinkSpeak channels — saved to your account</p></div>
-      <button class="refresh-btn" onclick="openAddChannel()">&#xFF0B; Add Channel</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;">
-      <div class="card">
-        <div class="panel-hdr">
-          <h3>My Channels</h3>
-          <span class="pill" id="iot-ch-count">0 channels</span>
-        </div>
-        <div id="iot-channels-list">
-          <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b style="color:var(--accent1)">+ Add Channel</b> to get started.</div>
-        </div>
+
+  <!-- REFRESH SELECTION MODAL -->
+  <div class="modal-overlay" id="refreshModal" style="display:none;"
+    onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal" style="width:360px;padding:0;overflow:hidden;">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);">
+        <h3 style="margin:0;font-size:16px;color:var(--white);font-family:'Sora',sans-serif;">Auto Refresh Interval</h3>
+        <div onclick="document.getElementById('refreshModal').style.display='none'"
+          style="cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;">
+          ✕</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="card card-pad">
-          <div class="panel-hdr" style="margin:-20px -22px 14px;padding:14px 20px;"><h3>Active Channel</h3><span class="pill green" id="iot-status-chip">&#8211;</span></div>
-          <div style="display:flex;flex-direction:column;gap:9px;">
-            <div class="sig-info-row"><span class="sik">Channel ID</span><span class="siv" id="iot-channel-id" style="font-family:monospace;font-size:12px">&#8211;</span></div>
-            <div class="sig-info-row"><span class="sik">API Key</span><span class="siv" id="iot-api-key" style="font-family:monospace;font-size:11px">&#8211;</span></div>
-            <div class="sig-info-row"><span class="sik">Results</span><span class="siv" id="iot-results">&#8211;</span></div>
-            <div class="sig-info-row"><span class="sik">Refresh</span><span class="siv">Every 5 seconds</span></div>
-            <div class="sig-info-row"><span class="sik">Host</span><span class="siv" style="font-size:11px;color:var(--accent1);font-family:monospace">api.thingspeak.com</span></div>
+      <div style="padding:10px 0;">
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(2)">2 seconds</div>
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(5)">5 seconds</div>
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(10)">10 seconds</div>
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(15)">15 seconds</div>
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(30)">30 seconds</div>
+        <div class="tb-dd-menu-item" style="padding:12px 20px;" onclick="setRefreshTime(60)">60 seconds</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🚆</div>
+      <div class="logo-text">RailSignal</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" data-page="dashboard" onclick="navigate(this)"><span class="nav-icon">📊</span>
+        Dashboard</div>
+      <div class="nav-item" data-page="signal-monitor" onclick="navigate(this)"><span class="nav-icon">🚦</span> Signal
+        Monitor</div>
+      <div class="nav-item" data-page="iot-channels" onclick="navigate(this)"><span class="nav-icon">📡</span> IoT
+        Channels</div>
+      <div class="nav-item" data-page="signal-log" onclick="navigate(this)"><span class="nav-icon">📋</span> Signal Log
+      </div>
+      <div class="nav-section-label">Analytics</div>
+      <div class="nav-item" data-page="reports" onclick="navigate(this)"><span class="nav-icon">📈</span> Reports</div>
+      <div class="nav-item" data-page="settings" onclick="navigate(this)"><span class="nav-icon">⚙️</span> Settings
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="avatar">R</div>
+      <div class="avatar-info">
+        <div class="avatar-name">Rail Admin</div>
+        <div class="avatar-role">Signal Operator</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-right" style="position:relative;">
+
+        <!-- Settings btn -->
+        <div class="tb-btn" onclick="navToSettings()" title="Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </div>
+
+        <!-- Channels btn + inline dropdown -->
+        <div style="position:relative;">
+          <div class="tb-btn" onclick="toggleChannelDropdown()" title="Channels"
+            style="width:auto;padding:0 12px;gap:6px;font-size:12px;font-weight:600;color:var(--accent1);border-color:rgba(79,124,255,0.3);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            Channels
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+          <div id="channel-dropdown" class="tb-dropdown" style="display:none;width:300px;right:0;">
+            <div class="tb-dd-header">
+              <span>📡 My Channels</span>
+            </div>
+            <div id="channel-list" style="max-height:300px;overflow-y:auto;">
+              <div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">No channels yet</div>
+            </div>
           </div>
         </div>
-        <div class="card card-pad">
-          <div class="panel-hdr" style="margin:-20px -22px 14px;padding:14px 20px;"><h3>How to Connect</h3></div>
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted);line-height:1.8;">
-            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">1.</span><span>Go to <span style="color:var(--accent1)">thingspeak.com</span> &#8594; My Channels</span></div>
-            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">2.</span><span>Note the <b style="color:var(--text)">Channel ID</b></span></div>
-            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">3.</span><span>API Keys tab &#8594; copy Read Key</span></div>
-            <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">4.</span><span>field1 must send <b style="color:var(--text)">RED / YELLOW / DOUBLE_YELLOW / GREEN</b></span></div>
+
+
+        <!-- Avatar + dropdown -->
+        <div style="position:relative;">
+          <div class="tb-avatar" onclick="toggleDropdown('avatar-dropdown')" title="Profile" style="cursor:pointer;">R
+          </div>
+          <div id="avatar-dropdown" class="tb-dropdown" style="display:none;width:220px;right:0;">
+            <div
+              style="padding:16px 16px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+              <div
+                style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;">
+                R</div>
+              <div>
+                <div class="avatar-name" style="font-size:13px;font-weight:600;color:var(--white);">Rail Admin</div>
+                <div class="avatar-role" style="font-size:11px;color:var(--muted);">Signal Operator</div>
+              </div>
+            </div>
+            <div class="tb-dd-menu-item" onclick="navToPage('settings')">⚙️ Settings</div>
+            <div class="tb-dd-menu-item" onclick="navToPage('iot-channels')">📡 IoT Channels</div>
+            <div class="tb-dd-menu-item" style="color:var(--red);border-top:1px solid var(--border);"
+              onclick="doSignOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <div id="page-dashboard" class="page-section">
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <div>
+            <h2>Railway Signalling · IoT Monitor</h2>
+            <p id="channelLabel">Not connected — use ⚙️ to configure ThingSpeak</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="live-pulse">
+              <div class="live-dot-anim"></div>LIVE
+            </div>
+            <div class="countdown-badge" title="Auto-refreshes every 5 seconds">⟳ <span id="countdown">5s</span></div>
+            <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- ROW 1: LATEST SIGNAL HERO -->
+        <div class="card"
+          style="display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:32px; padding:12px 40px; border:1px solid rgba(255,255,255,0.06); background:linear-gradient(180deg, rgba(26,32,48,0.4) 0%, rgba(30,37,53,0.2) 100%); margin-bottom: 16px;">
+          <div style="display:flex; flex-direction:column; justify-content:center;">
+            <div
+              style="font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; font-family:'Sora',sans-serif;">
+              Current Signal Status</div>
+            <div id="hero-signal-name"
+              style="font-family:'Sora',sans-serif; font-size:48px; font-weight:800; letter-spacing:-1px; line-height:1.1; text-shadow:0 0 20px rgba(0,0,0,0.8);">
+              -</div>
+          </div>
+          <div style="width:1px; align-self:stretch; background:rgba(255,255,255,0.08); flex-shrink:0;"></div>
+          <div id="hero-signal-meaning"
+            style="font-family:'Sora',sans-serif; font-size:22px; font-weight:600; color:var(--white); text-align:left; flex:1; line-height:1.45;">
+            Syncing with network...</div>
+        </div>
+
+        <!-- ROW 2: CHART + SIGNAL TOWER -->
+        <div class="grid-2-1" style="height: calc(100vh - 420px); min-height: 360px; align-items: stretch;">
+
+          <!-- BAR CHART -->
+          <div class="card" style="display:flex;flex-direction:column;">
+            <div class="panel-hdr">
+              <h3>Signal History — Field1 Timeline</h3>
+              <div class="panel-hdr-right">
+                <span class="pill" id="chart-range">Last 10 entries</span>
+              </div>
+            </div>
+            <div style="flex:1;padding:16px 20px 0;display:flex;flex-direction:column;">
+              <div style="position:relative;flex:1;width:100%;min-height:200px;">
+                <canvas id="barChart"></canvas>
+              </div>
+              <div
+                style="display:flex;align-items:center;justify-content:center;gap:20px;padding:16px 0;margin-top:auto;border-top:1px solid rgba(255,255,255,0.04);">
+                <div
+                  style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.5px;">
+                  <div style="width:10px;height:10px;border-radius:50%;background:var(--green)"></div>PROCEED
+                </div>
+                <div
+                  style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.5px;">
+                  <div style="width:10px;height:10px;border-radius:50%;background:#fde047"></div>CAUTION
+                </div>
+                <div
+                  style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.5px;">
+                  <div
+                    style="width:10px;height:10px;border-radius:50%;background:linear-gradient(0deg, var(--yellow) 42%, transparent 42%, transparent 58%, var(--yellow) 58%)">
+                  </div>DBL YELLOW
+                </div>
+                <div
+                  style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.5px;">
+                  <div style="width:10px;height:10px;border-radius:50%;background:var(--red)"></div>STOP
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIGNAL TOWER -->
+          <div class="card" style="display: flex; flex-direction: column;">
+            <div class="panel-hdr">
+              <h3>Live Signal State</h3>
+              <span class="pill green" id="current-chip">–</span>
+            </div>
+            <div class="signal-tower-wrap"
+              style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 0;">
+              <div style="display:flex;flex-direction:column;align-items:center;">
+                <div class="signal-housing">
+                  <div class="sig-light" id="light-dyellow-top"></div>
+                  <div class="sig-light" id="light-green"></div>
+                  <div class="sig-light" id="light-yellow"></div>
+                  <div class="sig-light" id="light-red"></div>
+                </div>
+                <div class="mast"></div>
+                <div class="mast-foot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 3: TABLE + DONUT -->
+        <div class="grid-2-1">
+
+          <!-- TABLE -->
+          <div class="card">
+            <div class="panel-hdr">
+              <h3>Signal Log — Recent Entries</h3>
+              <span class="pill" id="table-count">0 entries</span>
+            </div>
+            <div style="overflow-x:auto;max-height:320px;overflow-y:auto;">
+              <table class="signal-table">
+                <thead>
+                  <tr>
+                    <th>Entry</th>
+                    <th>Timestamp</th>
+                    <th>Signal</th>
+                    <th>Meaning</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr>
+                    <td colspan="4" style="text-align:center;color:var(--muted);padding:30px;">No data — configure
+                      ThinkSpeak or use Demo mode</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- DONUT + PROGRESS -->
+          <div class="card">
+            <div class="panel-hdr">
+              <h3>Signal Distribution</h3>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut-canvas-wrap">
+                <canvas id="donutChart"></canvas>
+                <div class="donut-label">
+                  <div class="donut-pct" id="donut-pct">–</div>
+                  <div class="donut-sub">Red %</div>
+                </div>
+              </div>
+              <div class="donut-legend">
+                <div class="dl-item">
+                  <div class="dl-dot" style="background:var(--red)"></div>
+                  <div class="dl-label">RED</div>
+                  <div class="dl-val" id="dl-red">–</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-dot" style="background:#fde047"></div>
+                  <div class="dl-label">YELLOW</div>
+                  <div class="dl-val" id="dl-yellow">–</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-dot"
+                    style="background:linear-gradient(0deg, var(--yellow) 42%, transparent 42%, transparent 58%, var(--yellow) 58%)">
+                  </div>
+                  <div class="dl-label" style="font-size:10px">DBL YELLOW</div>
+                  <div class="dl-val" id="dl-dyellow">–</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-dot" style="background:var(--green)"></div>
+                  <div class="dl-label">GREEN</div>
+                  <div class="dl-val" id="dl-green">–</div>
+                </div>
+              </div>
+            </div>
+            <div class="prog-section">
+              <div class="prog-row">
+                <div class="prog-meta"><span class="prog-name" style="display:flex;align-items:center;gap:6px;">
+                    <div style="width:11px;height:11px;border-radius:50%;background:var(--red)"></div> STOP (Red)
+                  </span><span class="prog-pct" id="pp-red">0%</span></div>
+                <div class="prog-bar-track">
+                  <div class="prog-bar-fill" id="pb-red" style="width:0%;background:var(--red)"></div>
+                </div>
+              </div>
+              <div class="prog-row">
+                <div class="prog-meta"><span class="prog-name" style="display:flex;align-items:center;gap:6px;">
+                    <div style="width:11px;height:11px;border-radius:50%;background:#fde047"></div> CAUTION (Yellow)
+                  </span><span class="prog-pct" id="pp-yellow">0%</span></div>
+                <div class="prog-bar-track">
+                  <div class="prog-bar-fill" id="pb-yellow" style="width:0%;background:#fde047"></div>
+                </div>
+              </div>
+              <div class="prog-row">
+                <div class="prog-meta"><span class="prog-name" style="display:flex;align-items:center;gap:6px;">
+                    <div
+                      style="width:11px;height:11px;border-radius:50%;background:linear-gradient(0deg, var(--yellow) 42%, transparent 42%, transparent 58%, var(--yellow) 58%)">
+                    </div> PROCEED_CAUTION (Double Yellow)
+                  </span><span class="prog-pct" id="pp-dyellow">0%</span></div>
+                <div class="prog-bar-track">
+                  <div class="prog-bar-fill" id="pb-dyellow" style="width:0%;background:var(--yellow)"></div>
+                </div>
+              </div>
+              <div class="prog-row">
+                <div class="prog-meta"><span class="prog-name" style="display:flex;align-items:center;gap:6px;">
+                    <div style="width:11px;height:11px;border-radius:50%;background:var(--green)"></div> PROCEED (Green)
+                  </span><span class="prog-pct" id="pp-green">0%</span></div>
+                <div class="prog-bar-track">
+                  <div class="prog-bar-fill" id="pb-green" style="width:0%;background:var(--green)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-dashboard -->
+
+      <!-- PAGE: SIGNAL MONITOR -->
+      <div id="page-signal-monitor" class="page-section" style="display:none;">
+        <div class="page-header" style="margin-bottom:16px;">
+          <div>
+            <h2>🚦 Signal Monitor</h2>
+            <p>Real-time live signal state from ThinkSpeak field1</p>
+          </div>
+        </div>
+        <!-- Page content wrapper restricted to avoid overflow -->
+        <div
+          style="display:grid;grid-template-columns:1fr 1fr;gap:16px; height: calc(100vh - 190px); min-height: 440px;">
+          <div class="card" style="display:flex;flex-direction:column;padding:16px;">
+            <div class="panel-hdr" style="margin:-16px -16px 10px;padding:12px 16px;">
+              <h3>Current Active Signal</h3>
+            </div>
+            <div style="display:flex;justify-content:center;padding:0;flex:1;align-items:center;">
+              <div>
+                <div
+                  style="width:58px;background:#050608;border:3px solid #111;border-radius:29px;padding:8px 0;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 8px 20px rgba(0,0,0,0.8),inset 0 0 10px rgba(0,0,0,0.6);margin:0 auto;">
+                  <div id="sm-light-dyellow" class="sig-light" style="width:28px;height:28px;"></div>
+                  <div id="sm-light-green" class="sig-light" style="width:28px;height:28px;"></div>
+                  <div id="sm-light-yellow" class="sig-light" style="width:28px;height:28px;"></div>
+                  <div id="sm-light-red" class="sig-light" style="width:28px;height:28px;"></div>
+                </div>
+                <div style="width:6px;height:20px;background:rgba(255,255,255,0.1);margin:0 auto;"></div>
+                <div
+                  style="width:30px;height:6px;background:rgba(255,255,255,0.08);border-radius:0 0 4px 4px;margin:0 auto;">
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;">
+              <div class="sig-info-row" style="padding:8px 12px;margin:0;"><span class="sik">Signal</span><span
+                  class="siv" id="sm-state" style="font-size:16px;">–</span></div>
+              <div class="sig-info-row" style="padding:8px 12px;margin:0;"><span class="sik">Meaning</span><span
+                  class="siv" id="sm-meaning">–</span></div>
+              <div class="sig-info-row" style="padding:8px 12px;margin:0;"><span class="sik">Entry</span><span
+                  class="siv" id="sm-entry">–</span></div>
+              <div class="sig-info-row" style="padding:8px 12px;margin:0;"><span class="sik">Timestamp</span><span
+                  class="siv" id="sm-time" style="font-size:11px">–</span></div>
+            </div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;padding:16px;">
+            <div class="panel-hdr" style="margin:-16px -16px 10px;padding:12px 16px;">
+              <h3>Signal Meaning Guide</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+              <div
+                style="background:rgba(34,211,138,0.08);border:1px solid rgba(34,211,138,0.2);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+                <div
+                  style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#5fffa0,#22d38a);box-shadow:0 0 10px #22d38a;flex-shrink:0;">
+                </div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:12px;color:var(--green)">GREEN —
+                    PROCEED</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:1px;line-height:1.2;">Proceed at authorised
+                    speed.</div>
+                </div>
+              </div>
+              <div
+                style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+                <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
+                  <div
+                    style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 8px #fbbf24;">
+                  </div>
+                  <div
+                    style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 8px #fbbf24;">
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:12px;color:var(--yellow)">DOUBLE
+                    YELLOW</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:1px;line-height:1.2;">Proceed prepared to
+                    find next signal at Caution.</div>
+                </div>
+              </div>
+              <div
+                style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+                <div
+                  style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 8px #fbbf24;flex-shrink:0;">
+                </div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:12px;color:var(--yellow)">YELLOW
+                  </div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:1px;line-height:1.2;">Expect next signal at
+                    STOP. Prepare to stop.</div>
+                </div>
+              </div>
+              <div
+                style="background:rgba(255,77,106,0.08);border:1px solid rgba(255,77,106,0.2);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+                <div
+                  style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ff8090,#ff4d6a);box-shadow:0 0 10px #ff4d6a;flex-shrink:0;">
+                </div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:12px;color:var(--red)">RED — STOP
+                  </div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:1px;line-height:1.2;">STOP the train prior to
+                    the signal.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- PAGE: SIGNAL LOG -->
-  <div id="page-signal-log" class="page-section" style="display:none">
-    <div class="page-header">
-      <div><h2>📋 Signal Log</h2><p>Full history of all signal events</p></div>
-      <button class="refresh-btn" onclick="fetchData()">↻ Refresh Log</button>
-    </div>
-    <div class="card">
-      <div class="panel-hdr"><h3>All Signal Entries</h3><span class="pill" id="log-count">0 entries</span></div>
-      <div style="overflow-x:auto;">
-        <table class="signal-table" style="width:100%">
-          <thead><tr><th>Entry</th><th>Timestamp</th><th>Signal</th><th>Meaning</th><th>Index</th></tr></thead>
-          <tbody id="logTableBody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">No data loaded yet</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAGE: REPORTS -->
-  <div id="page-reports" class="page-section" style="display:none">
-    <div class="page-header"><div><h2>📈 Reports</h2><p>Signal analytics and statistics summary</p></div></div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px;">
-      <div class="stat-card"><div class="stat-header"><div class="stat-icon red">🔴</div></div><div class="stat-value" id="rp-red" style="color:var(--red)">–</div><div class="stat-label">Total RED Signals</div><div class="stat-change down">⬤ <span id="rp-red-pct">–%</span></div></div>
-      <div class="stat-card"><div class="stat-header"><div class="stat-icon yellow">🟡</div></div><div class="stat-value" id="rp-yellow" style="color:var(--yellow)">–</div><div class="stat-label">Total YELLOW Signals</div><div class="stat-change" style="color:var(--yellow)">⬤ <span id="rp-yellow-pct">–%</span></div></div>
-      <div class="stat-card"><div class="stat-header"><div class="stat-icon green">🟢</div></div><div class="stat-value" id="rp-green" style="color:var(--green)">–</div><div class="stat-label">Total GREEN Signals</div><div class="stat-change up">⬤ <span id="rp-green-pct">–%</span></div></div>
-    </div>
-    <div class="card">
-      <div class="panel-hdr"><h3>Signal Frequency Chart</h3></div>
-      <div style="padding:20px;height:280px;"><canvas id="reportChart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- PAGE: TIMELINE -->
-  <div id="page-timeline" class="page-section" style="display:none">
-    <div class="page-header"><div><h2>🗓️ Timeline</h2><p>Signal history visualization and definitions</p></div></div>
-    
-    <!-- Signal History Chart -->
-    <div class="card">
-      <div class="panel-hdr">
-        <h3>Signal History — Field1 Timeline</h3>
-        <div class="panel-hdr-right">
-          <span class="pill" id="timeline-chart-range">Last 20 entries</span>
+      <!-- PAGE: IOT CHANNELS -->
+      <div id="page-iot-channels" class="page-section" style="display:none">
+        <div class="page-header">
+          <div>
+            <h2>&#128225; IoT Channels</h2>
+            <p>Manage your ThinkSpeak channels — saved to your account</p>
+          </div>
+          <button class="refresh-btn" onclick="openAddChannel()">&#xFF0B; Add Channel</button>
         </div>
-      </div>
-      <div style="padding:20px;height:250px;position:relative;">
-        <canvas id="timelineChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Signal State Definition Cards -->
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:20px;">
-      <!-- GREEN CARD -->
-      <div style="background:rgba(34,211,138,0.05);border:1px solid rgba(34,211,138,0.2);border-left:4px solid #22d38a;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
-        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#5fffa0,#22d38a);box-shadow:0 0 16px rgba(34,211,138,0.4);flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">GREEN</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Proceed at speed</div>
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;">
+          <div class="card">
+            <div class="panel-hdr">
+              <h3>My Channels</h3>
+              <span class="pill" id="iot-ch-count">0 channels</span>
+            </div>
+            <div id="iot-channels-list">
+              <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b
+                  style="color:var(--accent1)">+ Add Channel</b> to get started.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card card-pad">
+              <div class="panel-hdr" style="margin:-20px -22px 14px;padding:14px 20px;">
+                <h3>How to Connect</h3>
+              </div>
+              <div
+                style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted);line-height:1.8;">
+                <div style="display:flex;gap:8px;"><span style="color:var(--accent1);font-weight:700;">1.</span><span>Go
+                    to <span style="color:var(--accent1)">thingspeak.com</span> &#8594; My Channels</span></div>
+                <div style="display:flex;gap:8px;"><span
+                    style="color:var(--accent1);font-weight:700;">2.</span><span>Note the <b
+                      style="color:var(--text)">Channel ID</b></span></div>
+                <div style="display:flex;gap:8px;"><span
+                    style="color:var(--accent1);font-weight:700;">3.</span><span>API Keys tab &#8594; copy Read
+                    Key</span></div>
+                <div style="display:flex;gap:8px;"><span
+                    style="color:var(--accent1);font-weight:700;">4.</span><span>field1 must send <b
+                      style="color:var(--text)">RED / YELLOW / DOUBLE_YELLOW / GREEN</b></span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- YELLOW CARD -->
-      <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-left:4px solid #fbbf24;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
-        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 16px rgba(251,191,36,0.4);flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">YELLOW</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Caution/Prepare</div>
+      <!-- PAGE: SIGNAL LOG -->
+      <div id="page-signal-log" class="page-section" style="display:none">
+        <div class="page-header">
+          <div>
+            <h2>📋 Signal Log</h2>
+            <p>Full history of all signal events</p>
+          </div>
+          <button class="refresh-btn" onclick="fetchData()">↻ Refresh Log</button>
+        </div>
+        <div class="card">
+          <div class="panel-hdr">
+            <h3>All Signal Entries</h3><span class="pill" id="log-count">0 entries</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="signal-table" style="width:100%">
+              <thead>
+                <tr>
+                  <th>Entry</th>
+                  <th>Timestamp</th>
+                  <th>Signal</th>
+                  <th>Meaning</th>
+                  <th>Index</th>
+                </tr>
+              </thead>
+              <tbody id="logTableBody">
+                <tr>
+                  <td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">No data loaded yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- RED CARD -->
-      <div style="background:rgba(255,77,106,0.05);border:1px solid rgba(255,77,106,0.2);border-left:4px solid #ff4d6a;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
-        <div style="width:48px;height:48px;border-radius:10px;background:radial-gradient(circle at 40% 35%,#ff8090,#ff4d6a);box-shadow:0 0 16px rgba(255,77,106,0.4);flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">RED</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Stop immediately</div>
+      <!-- PAGE: REPORTS -->
+      <div id="page-reports" class="page-section" style="display:none">
+        <div class="page-header">
+          <div>
+            <h2>📈 Reports</h2>
+            <p>Signal analytics and statistics summary</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon red">🔴</div>
+            </div>
+            <div class="stat-value" id="rp-red" style="color:var(--red)">–</div>
+            <div class="stat-label">Total RED Signals</div>
+            <div class="stat-change down">⬤ <span id="rp-red-pct">–%</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="color:#fbbf24; font-size:20px; line-height:1;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.4" />
+                  <path d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12" fill="currentColor" />
+                </svg>
+              </div>
+            </div>
+            <div class="stat-value" id="rp-dyellow" style="color:#fbbf24">–</div>
+            <div class="stat-label">Total DBL YELLOW</div>
+            <div class="stat-change" style="color:#fbbf24">⬤ <span id="rp-dyellow-pct">–%</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon yellow">🟡</div>
+            </div>
+            <div class="stat-value" id="rp-yellow" style="color:var(--yellow)">–</div>
+            <div class="stat-label">Total YELLOW Signals</div>
+            <div class="stat-change" style="color:var(--yellow)">⬤ <span id="rp-yellow-pct">–%</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">🟢</div>
+            </div>
+            <div class="stat-value" id="rp-green" style="color:var(--green)">–</div>
+            <div class="stat-label">Total GREEN Signals</div>
+            <div class="stat-change up">⬤ <span id="rp-green-pct">–%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="panel-hdr">
+            <h3>Signal Frequency Chart</h3>
+          </div>
+          <div style="padding:20px;height:280px;"><canvas id="reportChart"></canvas></div>
         </div>
       </div>
 
-      <!-- DOUBLE YELLOW CARD -->
-      <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-left:4px solid #fbbf24;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:16px;">
-        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
-          <div style="width:48px;height:22px;border-radius:8px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 14px rgba(251,191,36,0.35);"></div>
-          <div style="width:48px;height:22px;border-radius:8px;background:radial-gradient(circle at 40% 35%,#ffe980,#fbbf24);box-shadow:0 0 14px rgba(251,191,36,0.35);"></div>
+      <!-- PAGE: SETTINGS -->
+      <div id="page-settings" class="page-section" style="display:none">
+        <div class="page-header">
+          <div>
+            <h2>⚙️ Settings</h2>
+            <p>Dashboard configuration and preferences</p>
+          </div>
         </div>
-        <div style="flex:1;">
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:14px;color:#e2e8f4;">DOUBLE YELLOW</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:3px;">Caution ahead signal</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card card-pad">
+            <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;">
+              <h3>Account Details</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="sig-info-row"><span class="sik">Name</span><span class="siv" id="account-name">-</span></div>
+              <div class="sig-info-row"><span class="sik">Email</span><span class="siv" id="account-email">-</span>
+              </div>
+              <div class="sig-info-row"><span class="sik">Role</span><span class="siv">Signal Operator</span></div>
+              <div class="sig-info-row"><span class="sik">Channels</span><span class="siv"
+                  id="account-channels">0</span></div>
+              <div class="sig-info-row"><span class="sik">Status</span><span class="siv"
+                  id="account-status">Active</span></div>
+              <button class="btn-demo" onclick="doSignOut()" style="margin-top:8px;width:fit-content;">🚪 Sign
+                Out</button>
+            </div>
+          </div>
+          <div class="card card-pad">
+            <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;">
+              <h3>About</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="sig-info-row"><span class="sik">Project</span><span class="siv">Smart Railway Signalling
+                  Systems</span></div>
+              <div class="sig-info-row"><span class="sik">IoT Platform</span><span class="siv">ThingSpeak</span></div>
+              <div class="sig-info-row"><span class="sik">Field</span><span class="siv">field1
+                  (RED/YELLOW/DOUBLE_YELLOW/GREEN)</span></div>
+              <div class="sig-info-row"><span class="sik">Dashboard</span><span class="siv">v2.0</span></div>
+              <div class="sig-info-row" style="align-items:center; position:relative;">
+                <span class="sik">Auto Refresh (sec)</span>
+
+                <div
+                  style="background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:12px; font-weight:600; color:var(--text); cursor:pointer; display:flex; align-items:center; gap:6px; user-select:none;"
+                  onclick="toggleRefreshMenu(event)">
+                  <span id="refresh-display-value">5</span>
+                  <span style="font-size:8px; color:var(--muted);">▼</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- PAGE: SETTINGS -->
-  <div id="page-settings" class="page-section" style="display:none">
-    <div class="page-header"><div><h2>⚙️ Settings</h2><p>Dashboard configuration and preferences</p></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>Account Details</h3></div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div class="sig-info-row"><span class="sik">Name</span><span class="siv" id="account-name">-</span></div>
-          <div class="sig-info-row"><span class="sik">Email</span><span class="siv" id="account-email">-</span></div>
-          <div class="sig-info-row"><span class="sik">Role</span><span class="siv">Signal Operator</span></div>
-          <div class="sig-info-row"><span class="sik">Channels</span><span class="siv" id="account-channels">0</span></div>
-          <div class="sig-info-row"><span class="sik">Status</span><span class="siv" id="account-status">Active</span></div>
-          <button class="btn-demo" onclick="doSignOut()" style="margin-top:8px;width:fit-content;">🚪 Sign Out</button>
-        </div>
-      </div>
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>ThinkSpeak Connection</h3></div>
-        <div style="display:flex;flex-direction:column;gap:14px;">
-          <div><label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase;">Channel ID</label><input id="set-channel" type="text" placeholder="Enter Channel ID" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;"></div>
-          <div><label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase;">Read API Key</label><input id="set-apikey" type="text" placeholder="Enter API Key" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;"></div>
-          <div><label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase;">Results to fetch</label><input id="set-results" type="number" value="100" min="10" max="8000" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;"></div>
-          <button class="btn-primary" onclick="applySettings()" style="margin-top:4px;">💾 Save & Connect</button>
-        </div>
-      </div>
-      <div class="card card-pad">
-        <div class="panel-hdr" style="margin:-20px -22px 18px;padding:16px 20px;"><h3>About</h3></div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div class="sig-info-row"><span class="sik">Project</span><span class="siv">Railway Signalling Systems</span></div>
-          <div class="sig-info-row"><span class="sik">IoT Platform</span><span class="siv">ThinkSpeak</span></div>
-          <div class="sig-info-row"><span class="sik">Field</span><span class="siv">field1 (RED / YELLOW / GREEN)</span></div>
-          <div class="sig-info-row"><span class="sik">Dashboard</span><span class="siv">v2.0</span></div>
-          <div class="sig-info-row"><span class="sik">Auto Refresh</span><span class="siv">Every 15 seconds</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
+    </div><!-- /content -->
+  </div><!-- /main -->
 
-  </div><!-- /content -->
-</div><!-- /main -->
+  <script>
 
-<script>
+    /* ══════════════════════════════════════
+       ⚙️  CONFIG — replace these or use modal
+    ══════════════════════════════════════ */
+    let CHANNEL_ID = '';   // ← YOUR THINGSPEAK CHANNEL ID
+    let API_KEY = '';   // ← YOUR THINGSPEAK READ API KEY
+    let RESULTS = 20;
 
-/* ══════════════════════════════════════
-   ⚙️  CONFIG — replace these or use modal
-══════════════════════════════════════ */
-let CHANNEL_ID  = '';   // ← YOUR THINGSPEAK CHANNEL ID
-let API_KEY     = '';   // ← YOUR THINGSPEAK READ API KEY
-let RESULTS     = 20;
-
-/* Normalise raw ThinkSpeak field1 value at ingest time.
-   Accepts any casing/spacing variant and returns canonical form. */
-function normaliseRaw(raw) {
-  const v = (raw || '').toString().toUpperCase().replace(/[_\s-]+/g, '_').trim();
-  if (v === 'GREEN')                              return 'GREEN';
-  if (v === 'DOUBLE_YELLOW' || v === 'DOUBLEYELLOW') return 'DOUBLE_YELLOW';
-  if (v === 'YELLOW')                             return 'YELLOW';
-  if (v === 'RED')                                return 'RED';
-  return null;
-}
-
-/* ══════════════════════════════════════
-   STATE
-══════════════════════════════════════ */
-let barChartInst   = null;
-let donutChartInst = null;
-let countdown      = 5;
-let countdownTimer = null;
-let refreshTimer   = null;
-
-const meanings = { RED:'STOP', YELLOW:'CAUTION', DOUBLE_YELLOW:'CAUTION AHEAD', GREEN:'PROCEED' };
-
-/* ══════════════════════════════════════
-   MODAL ACTIONS
-══════════════════════════════════════ */
-function connectThinkSpeak() {
-  const cid  = document.getElementById('inputChannelId').value.trim();
-  const akey = document.getElementById('inputApiKey').value.trim();
-  const res  = parseInt(document.getElementById('inputResults').value) || 20;
-  if (!cid || !akey) { alert('Please enter both Channel ID and API Key'); return; }
-  CHANNEL_ID = cid;
-  API_KEY    = akey;
-  RESULTS    = res;
-  document.getElementById('configModal').style.display = 'none';
-  document.getElementById('channelLabel').textContent = `Channel: ${CHANNEL_ID} · ThinkSpeak IoT · field1`;
-  fetchData();
-  startAutoRefresh();
-  maybeAddCurrentAsChannel();
-}
-
-function loadDemoData() {
-  if (document.getElementById('configModal')) document.getElementById('configModal').style.display = 'none';
-  if (document.getElementById('loginModal')) document.getElementById('loginModal').style.display = 'none';
-  if (document.getElementById('registerModal')) document.getElementById('registerModal').style.display = 'none';
-  document.getElementById('channelLabel').textContent = 'Demo Mode · Sample Data · field1';
-  const demo = [
-    { created_at:'2025-07-29T12:50:00Z', entry_id:1,  field1:'RED'    },
-    { created_at:'2025-07-29T12:51:55Z', entry_id:2,  field1:'YELLOW' },
-    { created_at:'2025-07-29T12:52:30Z', entry_id:3,  field1:'GREEN'  },
-    { created_at:'2025-07-29T13:12:50Z', entry_id:4,  field1:'RED'    },
-    { created_at:'2025-07-29T13:13:10Z', entry_id:5,  field1:'RED'    },
-    { created_at:'2025-07-29T13:25:40Z', entry_id:6,  field1:'YELLOW' },
-    { created_at:'2025-07-29T13:26:00Z', entry_id:7,  field1:'GREEN'  },
-    { created_at:'2025-07-29T13:26:20Z', entry_id:8,  field1:'YELLOW' },
-    { created_at:'2025-07-29T13:26:50Z', entry_id:9,  field1:'RED'    },
-    { created_at:'2025-07-29T13:43:40Z', entry_id:10, field1:'RED'    },
-  ];
-  renderDashboard(demo);
-  startAutoRefresh();
-}
-
-/* ══════════════════════════════════════
-   FETCH FROM THINGSPEAK
-══════════════════════════════════════ */
-async function fetchData() {
-  if (!CHANNEL_ID || !API_KEY) return;
-  const btn = document.getElementById('refreshBtn');
-  btn.disabled = true; btn.textContent = '↺ Loading...';
-  try {
-    // ThinkSpeak supports CORS — must use https and include the api_key as param
-    const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${API_KEY}&results=${RESULTS}&timezone=Asia%2FKolkata`;
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      mode: 'cors'          // ThinkSpeak allows CORS from browsers
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} — check your Channel ID and API Key`);
-    const json = await res.json();
-    const feeds = (json.feeds || []).map(f => ({
-      created_at: f.created_at,
-      entry_id:   Number(f.entry_id),
-      field1:     (f.field1 || '').toString().toUpperCase().trim()
-    })).map(f => ({
-      ...f,
-      field1: normaliseRaw(f.field1)  // normalise at ingest time
-    })).filter(f => f.field1 !== null);
-
-    if (feeds.length === 0) {
-      showToast('⚠️ Connected but no valid signal values found in field1 yet.');
+    /* Normalise raw ThingSpeak field1 value at ingest time.
+       Accepts any casing/spacing variant and returns canonical form. */
+    function normaliseRaw(raw) {
+      const v = (raw || '').toString().toUpperCase().replace(/[_\s-]+/g, '_').trim();
+      if (v === 'GREEN') return 'GREEN';
+      if (v === 'DOUBLE_YELLOW' || v === 'DOUBLEYELLOW') return 'DOUBLE_YELLOW';
+      if (v === 'YELLOW') return 'YELLOW';
+      if (v === 'RED') return 'RED';
+      return null;
     }
-    renderDashboard(feeds.length ? feeds : getDemoFeeds());
-  } catch(e) {
-    console.error('ThinkSpeak fetch error:', e);
-    showToast('❌ ' + e.message + ' — showing last data');
-  }
-  btn.disabled = false; btn.textContent = '↻ Refresh';
-  resetCountdown();
-}
 
-function getDemoFeeds() {
-  return [
-    { created_at:'2025-07-29T12:50:00Z', entry_id:1,  field1:'RED'    },
-    { created_at:'2025-07-29T12:51:55Z', entry_id:2,  field1:'YELLOW' },
-    { created_at:'2025-07-29T12:52:30Z', entry_id:3,  field1:'GREEN'  },
-    { created_at:'2025-07-29T13:12:50Z', entry_id:4,  field1:'RED'    },
-    { created_at:'2025-07-29T13:13:10Z', entry_id:5,  field1:'RED'    },
-    { created_at:'2025-07-29T13:25:40Z', entry_id:6,  field1:'YELLOW' },
-    { created_at:'2025-07-29T13:26:00Z', entry_id:7,  field1:'GREEN'  },
-    { created_at:'2025-07-29T13:26:20Z', entry_id:8,  field1:'YELLOW' },
-    { created_at:'2025-07-29T13:26:50Z', entry_id:9,  field1:'RED'    },
-    { created_at:'2025-07-29T13:43:40Z', entry_id:10, field1:'RED'    },
-  ];
-}
+    /* ══════════════════════════════════════
+       STATE
+    ══════════════════════════════════════ */
+    let barChartInst = null;
+    let donutChartInst = null;
+    let countdown = 5;
+    let countdownTimer = null;
+    let refreshTimer = null;
 
-function showToast(msg) {
-  let t = document.getElementById('toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toast';
-    t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+    const meanings = { RED: 'STOP', YELLOW: 'CAUTION', DOUBLE_YELLOW: 'CAUTION AHEAD', GREEN: 'PROCEED' };
+
+    /* ══════════════════════════════════════
+       MODAL ACTIONS
+    ══════════════════════════════════════ */
+    function connectThingSpeak() {
+      const cid = document.getElementById('inputChannelId').value.trim();
+      const akey = document.getElementById('inputApiKey').value.trim();
+      const res = parseInt(document.getElementById('inputResults').value) || 20;
+      if (!cid || !akey) { alert('Please enter both Channel ID and API Key'); return; }
+      CHANNEL_ID = cid;
+      API_KEY = akey;
+      RESULTS = res;
+      document.getElementById('configModal').style.display = 'none';
+      document.getElementById('channelLabel').textContent = `Channel: ${CHANNEL_ID} · ThingSpeak IoT · field1`;
+      fetchData();
+      startAutoRefresh();
+      maybeAddCurrentAsChannel();
+    }
+
+    function loadDemoData() {
+      if (document.getElementById('configModal')) document.getElementById('configModal').style.display = 'none';
+      if (document.getElementById('loginModal')) document.getElementById('loginModal').style.display = 'none';
+      if (document.getElementById('registerModal')) document.getElementById('registerModal').style.display = 'none';
+      document.getElementById('channelLabel').textContent = 'Demo Mode · Sample Data · field1';
+      const demo = [
+        { created_at: '2025-07-29T12:50:00Z', entry_id: 1, field1: 'RED' },
+        { created_at: '2025-07-29T12:51:55Z', entry_id: 2, field1: 'YELLOW' },
+        { created_at: '2025-07-29T12:52:30Z', entry_id: 3, field1: 'GREEN' },
+        { created_at: '2025-07-29T13:12:50Z', entry_id: 4, field1: 'RED' },
+        { created_at: '2025-07-29T13:13:10Z', entry_id: 5, field1: 'RED' },
+        { created_at: '2025-07-29T13:25:40Z', entry_id: 6, field1: 'YELLOW' },
+        { created_at: '2025-07-29T13:26:00Z', entry_id: 7, field1: 'GREEN' },
+        { created_at: '2025-07-29T13:26:20Z', entry_id: 8, field1: 'YELLOW' },
+        { created_at: '2025-07-29T13:26:50Z', entry_id: 9, field1: 'RED' },
+        { created_at: '2025-07-29T13:43:40Z', entry_id: 10, field1: 'RED' },
+      ];
+      renderDashboard(demo);
+      startAutoRefresh();
+    }
+
+    /* ══════════════════════════════════════
+       FETCH FROM THINGSPEAK
+    ══════════════════════════════════════ */
+    async function fetchData() {
+      if (!CHANNEL_ID || !API_KEY) return;
+      const btn = document.getElementById('refreshBtn');
+      btn.disabled = true; btn.textContent = '↺ Loading...';
+      try {
+        // ThingSpeak supports CORS — must use https and include the api_key as param
+        const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${API_KEY}&results=${RESULTS}&timezone=Asia%2FKolkata`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          mode: 'cors'          // ThingSpeak allows CORS from browsers
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — check your Channel ID and API Key`);
+        const json = await res.json();
+        const feeds = (json.feeds || []).map(f => ({
+          created_at: f.created_at,
+          entry_id: Number(f.entry_id),
+          field1: (f.field1 || '').toString().toUpperCase().trim()
+        })).map(f => ({
+          ...f,
+          field1: normaliseRaw(f.field1)  // normalise at ingest time
+        })).filter(f => f.field1 !== null);
+
+        if (feeds.length === 0) {
+          showToast('⚠️ Connected but no valid signal values found in field1 yet.');
+        }
+        renderDashboard(feeds.length ? feeds : getDemoFeeds());
+      } catch (e) {
+        console.error('ThingSpeak fetch error:', e);
+        showToast('❌ ' + e.message + ' — showing last data');
+      }
+      btn.disabled = false; btn.textContent = '↻ Refresh';
+      resetCountdown();
+    }
+
+    function getDemoFeeds() {
+      return [
+        { created_at: '2025-07-29T12:50:00Z', entry_id: 1, field1: 'RED' },
+        { created_at: '2025-07-29T12:51:55Z', entry_id: 2, field1: 'YELLOW' },
+        { created_at: '2025-07-29T12:52:30Z', entry_id: 3, field1: 'DOUBLE_YELLOW' },
+        { created_at: '2025-07-29T13:12:50Z', entry_id: 4, field1: 'GREEN' },
+        { created_at: '2025-07-29T13:13:10Z', entry_id: 5, field1: 'RED' },
+        { created_at: '2025-07-29T13:25:40Z', entry_id: 6, field1: 'YELLOW' },
+        { created_at: '2025-07-29T13:26:00Z', entry_id: 7, field1: 'GREEN' },
+        { created_at: '2025-07-29T13:26:20Z', entry_id: 8, field1: 'DOUBLE_YELLOW' },
+        { created_at: '2025-07-29T13:26:50Z', entry_id: 9, field1: 'RED' },
+        { created_at: '2025-07-29T13:43:40Z', entry_id: 10, field1: 'RED' },
+      ];
+    }
+
+    function showToast(msg) {
+      let t = document.getElementById('toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.style.cssText = `position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
       background:#1e2535;border:1px solid rgba(255,255,255,0.1);color:#e2e8f4;
       padding:12px 22px;border-radius:12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;
       z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.5);transition:opacity 0.3s;`;
-    document.body.appendChild(t);
-  }
-  t.textContent = msg; t.style.opacity = '1';
-  setTimeout(() => { t.style.opacity = '0'; }, 4000);
-}
+        document.body.appendChild(t);
+      }
+      t.textContent = msg; t.style.opacity = '1';
+      setTimeout(() => { t.style.opacity = '0'; }, 4000);
+    }
 
-/* ══════════════════════════════════════
-   RENDER
-══════════════════════════════════════ */
-function renderDashboard(feeds) {
-  if (!feeds.length) return;
-  lastFeeds = feeds;
-  syncSecondaryPages(feeds);
-  lastFeeds = feeds;
-  syncSecondaryPages(feeds);
+    /* ══════════════════════════════════════
+       RENDER
+    ══════════════════════════════════════ */
+    function renderDashboard(feeds) {
+      if (!feeds.length) return;
+      lastFeeds = feeds;
+      syncSecondaryPages(feeds);
 
-  const total  = feeds.length;
-  const redC   = feeds.filter(f=>normaliseSignal(f.field1)==='RED').length;
-  const yelC   = feeds.filter(f=>{ const n=normaliseSignal(f.field1); return n==='YELLOW'||n==='DOUBLE_YELLOW'; }).length;
-  const grnC   = feeds.filter(f=>normaliseSignal(f.field1)==='GREEN').length;
-  const redPct = Math.round(redC/total*100);
-  const yelPct = Math.round(yelC/total*100);
-  const grnPct = Math.round(grnC/total*100);
+      const total = feeds.length;
+      const redC = feeds.filter(f => normaliseSignal(f.field1) === 'RED').length;
+      const yelC = feeds.filter(f => normaliseSignal(f.field1) === 'YELLOW').length;
+      const dyelC = feeds.filter(f => normaliseSignal(f.field1) === 'DOUBLE_YELLOW').length;
+      const grnC = feeds.filter(f => normaliseSignal(f.field1) === 'GREEN').length;
 
-  // Stats
-  document.getElementById('s-total').textContent    = total;
-  document.getElementById('s-red').textContent      = redC;
-  document.getElementById('s-yellow').textContent   = yelC;
-  document.getElementById('s-green').textContent    = grnC;
-  document.getElementById('s-total-sub').textContent= `${total} entries fetched`;
-  document.getElementById('s-red-pct').textContent  = `${redPct}% of total`;
-  document.getElementById('s-yellow-pct').textContent = `${yelPct}% of total`;
-  document.getElementById('s-green-pct').textContent = `${grnPct}% of total`;
+      const redPct = Math.round(redC / total * 100);
+      const yelPct = Math.round(yelC / total * 100);
+      const dyelPct = Math.round(dyelC / total * 100);
+      const grnPct = Math.round(grnC / total * 100);
 
-  // Alert badge
-  document.getElementById('alertCount').textContent = redC;
+      // Stats (Removed in favor of top hero banner)
 
-  // Progress bars
-  document.getElementById('pb-red').style.width    = redPct+'%';
-  document.getElementById('pb-yellow').style.width = yelPct+'%';
-  document.getElementById('pb-green').style.width  = grnPct+'%';
-  document.getElementById('pp-red').textContent    = redPct+'%';
-  document.getElementById('pp-yellow').textContent = yelPct+'%';
-  document.getElementById('pp-green').textContent  = grnPct+'%';
 
-  // Donut legend
-  document.getElementById('dl-red').textContent    = redC;
-  document.getElementById('dl-yellow').textContent = yelC;
-  document.getElementById('dl-green').textContent  = grnC;
-  document.getElementById('donut-pct').textContent = redPct+'%';
 
-  // Live signal (latest)
-  const latest = feeds[feeds.length-1];
-  setSignalTower(latest);
+      // Progress bars
+      document.getElementById('pb-red').style.width = redPct + '%';
+      document.getElementById('pb-yellow').style.width = yelPct + '%';
+      document.getElementById('pb-dyellow').style.width = dyelPct + '%';
+      document.getElementById('pb-green').style.width = grnPct + '%';
+      document.getElementById('pp-red').textContent = redPct + '%';
+      document.getElementById('pp-yellow').textContent = yelPct + '%';
+      document.getElementById('pp-dyellow').textContent = dyelPct + '%';
+      document.getElementById('pp-green').textContent = grnPct + '%';
 
-  // Bar chart
-  renderBarChart(feeds);
+      // Donut legend
+      document.getElementById('dl-red').textContent = redC;
+      document.getElementById('dl-yellow').textContent = yelC;
+      document.getElementById('dl-dyellow').textContent = dyelC;
+      document.getElementById('dl-green').textContent = grnC;
+      document.getElementById('donut-pct').textContent = redPct + '%';
 
-  // Donut chart
-  renderDonutChart(redC, yelC, grnC);
+      // Live signal (latest)
+      const latest = feeds[feeds.length - 1];
+      setSignalTower(latest);
 
-  // Table
-  renderTable(feeds);
+      // Bar chart
+      renderBarChart(feeds.slice(-10));
 
-  document.getElementById('table-count').textContent = `${total} entries`;
-  document.getElementById('chart-range').textContent = `Last ${total} entries`;
-}
+      // Donut chart
+      renderDonutChart(redC, yelC, dyelC, grnC);
 
-/* ══════════════════════════════════════
-   SIGNAL TOWER
-══════════════════════════════════════ */
-/* Railway signal states:
-   GREEN        → top light lit (Proceed)
-   DOUBLE_YELLOW→ top + bottom-of-top lit (Caution ahead)
-   YELLOW       → middle light lit (Caution, prepare stop)
-   RED          → bottom light lit (STOP)
-   field1 values: GREEN / DOUBLE_YELLOW / YELLOW / RED  */
-const SIGNAL_CONFIG = {
-  GREEN:         { lights:['green'],                 color:'var(--green)',  label:'GREEN',         meaning:'Proceed at authorised speed' },
-  DOUBLE_YELLOW: { lights:['dyellow-top','yellow'],  color:'var(--yellow)', label:'DOUBLE YELLOW', meaning:'Proceed — next signal at Caution' },
-  YELLOW:        { lights:['yellow'],                color:'var(--yellow)', label:'YELLOW',         meaning:'Caution — prepare to STOP at next signal' },
-  RED:           { lights:['red'],                   color:'var(--red)',    label:'RED',            meaning:'STOP the train prior to the signal' },
-};
+      // Table
+      renderTable(feeds);
 
-/* Map old 3-value data to new 4-value system */
-function normaliseSignal(raw) {
-  // Since field1 is already normalised at ingest (via normaliseRaw),
-  // this is mostly a pass-through — but kept for safety
-  return normaliseRaw(raw);
-}
+      document.getElementById('table-count').textContent = `${total} entries`;
+      document.getElementById('chart-range').textContent = `Last ${Math.min(total, 10)} entries`;
+    }
 
-function applySignalLights(state, prefix) {
-  // prefix = '' for dashboard tower, 'sm-' for signal monitor
-  const cfg = SIGNAL_CONFIG[state];
-  ['dyellow-top','green','yellow','red'].forEach(id => {
-    const el = document.getElementById((prefix||'light-') + (prefix ? id.replace('dyellow-top','dyellow') : id));
-    // dashboard uses id="light-green" etc, monitor uses "sm-light-green" etc
-    const el2 = document.getElementById((prefix||'') + 'light-' + id);
-    const target = el2 || el;
-    if (!target) return;
-    const litClass = 'lit-' + (id.includes('yellow') ? 'yellow' : id.includes('green') ? 'green' : 'red');
-    target.className = 'sig-light' + (cfg && cfg.lights.some(l => id.startsWith(l) || l === id) ? ' ' + litClass : '');
-  });
-}
+    /* ══════════════════════════════════════
+       SIGNAL TOWER
+    ══════════════════════════════════════ */
+    /* Railway signal states:
+       GREEN        → top light lit (Proceed)
+       DOUBLE_YELLOW→ top + bottom-of-top lit (Caution ahead)
+       YELLOW       → middle light lit (Caution, prepare stop)
+       RED          → bottom light lit (STOP)
+       field1 values: GREEN / DOUBLE_YELLOW / YELLOW / RED  */
+    const SIGNAL_CONFIG = {
+      GREEN: { lights: ['green'], color: 'var(--green)', label: 'GREEN', meaning: 'Proceed at authorised speed' },
+      DOUBLE_YELLOW: { lights: ['dyellow-top', 'yellow'], color: 'var(--yellow)', label: 'DOUBLE YELLOW', meaning: 'Proceed — next signal at Caution' },
+      YELLOW: { lights: ['yellow'], color: 'var(--yellow)', label: 'YELLOW', meaning: 'Caution — prepare to STOP at next signal' },
+      RED: { lights: ['red'], color: 'var(--red)', label: 'RED', meaning: 'STOP the train prior to the signal' },
+    };
 
-function setSignalTower(entry) {
-  const raw = entry.field1;
-  const s   = normaliseSignal(raw) || 'RED';
-  const cfg = SIGNAL_CONFIG[s];
+    /* Map old 3-value data to new 4-value system */
+    function normaliseSignal(raw) {
+      // Since field1 is already normalised at ingest (via normaliseRaw),
+      // this is mostly a pass-through — but kept for safety
+      return normaliseRaw(raw);
+    }
 
-  applySignalLights(s, '');
+    function applySignalLights(state, prefix) {
+      // prefix = '' for dashboard tower, 'sm-' for signal monitor
+      const cfg = SIGNAL_CONFIG[state];
+      ['dyellow-top', 'green', 'yellow', 'red'].forEach(id => {
+        const el = document.getElementById((prefix || 'light-') + (prefix ? id.replace('dyellow-top', 'dyellow') : id));
+        // dashboard uses id="light-green" etc, monitor uses "sm-light-green" etc
+        const el2 = document.getElementById((prefix || '') + 'light-' + id);
+        const target = el2 || el;
+        if (!target) return;
+        const litClass = 'lit-' + (id.includes('yellow') ? 'yellow' : id.includes('green') ? 'green' : 'red');
+        target.className = 'sig-light' + (cfg && cfg.lights.some(l => id.startsWith(l) || l === id) ? ' ' + litClass : '');
+      });
+    }
 
-  const colMap = { GREEN:'var(--green)', DOUBLE_YELLOW:'var(--yellow)', YELLOW:'var(--yellow)', RED:'var(--red)' };
-  const chip = document.getElementById('current-chip');
-  if (chip) { chip.textContent = cfg.label; chip.className = 'pill ' + (s==='GREEN'?'green':s==='RED'?'red':'yellow'); }
+    function setSignalTower(entry) {
+      const raw = entry.field1;
+      const s = normaliseSignal(raw) || 'RED';
+      const cfg = SIGNAL_CONFIG[s];
 
-  setText('ci-state',   cfg.label,   colMap[s]);
-  setText('ci-meaning', cfg.meaning);
-  setText('ci-entry',   '#' + entry.entry_id);
-  setText('ci-time',    entry.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,''));
-}
+      applySignalLights(s, '');
 
-/* ══════════════════════════════════════
-   BAR CHART
-══════════════════════════════════════ */
-function renderBarChart(feeds) {
-  const labels = feeds.map(f => '#'+f.entry_id);
-  const colorMap = { RED:'#ff4d6a', YELLOW:'#fbbf24', GREEN:'#22d38a' };
+      const colMap = { GREEN: 'var(--green)', DOUBLE_YELLOW: 'var(--yellow)', YELLOW: '#fde047', RED: 'var(--red)' };
+      const chip = document.getElementById('current-chip');
+      if (chip) { chip.textContent = cfg.label; chip.className = 'pill ' + (s === 'GREEN' ? 'green' : s === 'RED' ? 'red' : 'yellow'); }
 
-  // Build a horizontal-stripe canvas pattern for DOUBLE_YELLOW bars
-  // Pattern tile = full bar height split into 2 halves (yellow / dark gap / yellow)
-  // Use a tall tile so 'repeat' only tiles once vertically across the bar
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = 2; tmpCanvas.height = 200;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  tmpCtx.fillStyle = '#fbbf24';
-  tmpCtx.fillRect(0, 0, 2, 97);       // top yellow half
-  tmpCtx.fillStyle = '#1a2030';
-  tmpCtx.fillRect(0, 97, 2, 5);       // 5px dark divider
-  tmpCtx.fillStyle = '#fbbf24';
-  tmpCtx.fillRect(0, 102, 2, 98);     // bottom yellow half
+      setText('hero-signal-name', cfg.label, colMap[s]);
+      setText('hero-signal-meaning', cfg.meaning);
 
-  const ctx = document.getElementById('barChart').getContext('2d');  // must be before createPattern
-  const dyPattern = ctx.createPattern(tmpCanvas, 'repeat');
+      setText('ci-state', cfg.label, colMap[s]);
+      setText('ci-meaning', cfg.meaning);
+      setText('ci-entry', '#' + entry.entry_id);
+      setText('ci-time', entry.created_at.replace('T', ' ').replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, ''));
+    }
 
-  const colors = feeds.map(f => {
-    const ns = normaliseSignal(f.field1);
-    if (ns === 'DOUBLE_YELLOW') return dyPattern;
-    return colorMap[ns] || '#6b7a99';
-  });
-  const vals = feeds.map(() => 1);
+    /* ══════════════════════════════════════
+       BAR CHART
+    ══════════════════════════════════════ */
+    function renderBarChart(feeds) {
+      const labels = feeds.map(f => '#' + f.entry_id);
+      const colorMap = { RED: '#ff4d6a', YELLOW: '#fde047', GREEN: '#22d38a' };
 
-  if (barChartInst) barChartInst.destroy();
+      const ctx = document.getElementById('barChart').getContext('2d');
 
-  const barThick = feeds.length > 60 ? 5 : feeds.length > 30 ? 8 : 13;
+      const colors = feeds.map(f => {
+        const ns = normaliseSignal(f.field1);
+        if (ns === 'DOUBLE_YELLOW') return '#fbbf24';
+        return colorMap[ns] || '#6b7a99';
+      });
+      const vals = feeds.map(() => 1);
 
-  barChartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: vals,
-        backgroundColor: colors,
-        borderRadius: 3,
-        borderSkipped: false,
-        barThickness: barThick,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: items => 'Entry ' + labels[items[0].dataIndex],
-            label: item => {
-              const ns = normaliseSignal(feeds[item.dataIndex].field1) || 'RED';
-              const cfg = SIGNAL_CONFIG[ns];
-              return ' ' + cfg.label + ' — ' + cfg.meaning.split('.')[0];
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: '#6b7a99',
-            font: { size: feeds.length > 50 ? 8 : 10 },
-            maxRotation: 90,
-            autoSkip: true,
-            maxTicksLimit: 20,
-          },
-          grid: { color: 'rgba(255,255,255,0.04)' }
+      if (barChartInst) barChartInst.destroy();
+
+      const barThick = feeds.length > 60 ? 8 : feeds.length > 30 ? 15 : 28;
+
+      barChartInst = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data: vals,
+            backgroundColor: colors,
+            borderRadius: 10,
+            borderSkipped: false,
+            barThickness: barThick,
+          }]
         },
-        y: {
-          display: false,
-          grid: { display: false },
-          min: 0,
-          max: 1.05
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: items => 'Entry ' + labels[items[0].dataIndex],
+                label: item => {
+                  const ns = normaliseSignal(feeds[item.dataIndex].field1) || 'RED';
+                  const cfg = SIGNAL_CONFIG[ns];
+                  return ' ' + cfg.label + ' — ' + cfg.meaning.split('.')[0];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#6b7a99',
+                font: { size: feeds.length > 50 ? 8 : 10 },
+                maxRotation: 90,
+                autoSkip: true,
+                maxTicksLimit: 20,
+              },
+              grid: { color: 'rgba(255,255,255,0.04)' }
+            },
+            y: {
+              display: false,
+              grid: { display: false },
+              min: 0,
+              max: 1.05
+            }
+          },
+          layout: { padding: { top: 2, bottom: 0 } }
         }
-      },
-      layout: { padding: { top: 2, bottom: 0 } }
+      });
     }
-  });
-}
 
-/* ══════════════════════════════════════
-   DONUT CHART
-══════════════════════════════════════ */
-function renderDonutChart(r, y, g) {
-  const ctx = document.getElementById('donutChart').getContext('2d');
-  if (donutChartInst) donutChartInst.destroy();
+    /* ══════════════════════════════════════
+       DONUT CHART
+    ══════════════════════════════════════ */
+    function renderDonutChart(r, y, dy, g) {
+      const ctx = document.getElementById('donutChart').getContext('2d');
+      if (donutChartInst) donutChartInst.destroy();
 
-  donutChartInst = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['RED','YELLOW','GREEN'],
-      datasets:[{
-        data: [r, y, g],
-        backgroundColor: ['#ff4d6a','#fbbf24','#22d38a'],
-        borderColor: '#1a2030',
-        borderWidth: 3,
-        hoverOffset: 4,
-      }]
-    },
-    options: {
-      cutout: '72%',
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } }
+      donutChartInst = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['RED', 'YELLOW', 'DBL YELLOW', 'GREEN'],
+          datasets: [{
+            data: [r, y, dy, g],
+            backgroundColor: ['#ff4d6a', '#fde047', '#fbbf24', '#22d38a'],
+            borderColor: '#1a2030',
+            borderWidth: 3,
+            hoverOffset: 4,
+          }]
+        },
+        options: {
+          cutout: '72%',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
     }
-  });
-}
 
-/* ══════════════════════════════════════
-   TABLE
-══════════════════════════════════════ */
-function renderTable(feeds) {
-  const body = document.getElementById('tableBody');
-  body.innerHTML = '';
-  const msgMap = { RED:'Train Must Halt', YELLOW:'Reduce Speed', DOUBLE_YELLOW:'Caution Ahead', GREEN:'Clear to Proceed' };
-  [...feeds].reverse().forEach(f => {
-    const ns2  = normaliseSignal(f.field1) || 'RED';
-    const cfg2 = SIGNAL_CONFIG[ns2];
-    const cls  = ns2 === 'GREEN' ? 'green' : ns2 === 'RED' ? 'red' : 'yellow';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    /* ══════════════════════════════════════
+       TABLE
+    ══════════════════════════════════════ */
+    function renderTable(feeds) {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      const msgMap = { RED: 'Train Must Halt', YELLOW: 'Reduce Speed', DOUBLE_YELLOW: 'Caution Ahead', GREEN: 'Clear to Proceed' };
+      [...feeds].reverse().forEach(f => {
+        const ns2 = normaliseSignal(f.field1) || 'RED';
+        const cfg2 = SIGNAL_CONFIG[ns2];
+        const cls = ns2 === 'GREEN' ? 'green' : ns2 === 'RED' ? 'red' : 'yellow';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
       <td><span class="entry-num">#${f.entry_id}</span></td>
-      <td><span class="ts-mono">${f.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,'')}</span></td>
+      <td><span class="ts-mono">${f.created_at.replace('T', ' ').replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, '')}</span></td>
       <td><span class="sig-chip ${cls}"><span class="sig-dot ${cls}"></span>${cfg2.label}</span></td>
       <td style="font-size:12px;color:var(--muted)">${cfg2.meaning}</td>
     `;
-    body.appendChild(tr);
-  });
-}
-
-/* ══════════════════════════════════════
-   AUTO REFRESH
-══════════════════════════════════════ */
-function startAutoRefresh() {
-  if (refreshTimer) clearInterval(refreshTimer);
-  if (countdownTimer) clearInterval(countdownTimer);
-  refreshTimer = setInterval(() => { fetchData(); }, 5000);
-  resetCountdown();
-}
-
-function resetCountdown() {
-  countdown = 5;
-  if (countdownTimer) clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    countdown--;
-    document.getElementById('countdown').textContent = countdown + 's';
-    if (countdown <= 0) { countdown = 5; }
-  }, 1000);
-}
-/* ══════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════ */
-const PAGE_TITLES = {
-  'dashboard':      'Dashboard',
-  'signal-monitor': 'Signal Monitor',
-  'iot-channels':   'IoT Channels',
-  'signal-log':     'Signal Log',
-  'reports':        'Reports',
-  'timeline':       'Timeline',
-  'settings':       'Settings',
-};
-
-let lastFeeds = [];
-
-function navigate(el) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  el.classList.add('active');
-  const page = el.dataset.page;
-  document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
-  document.getElementById('page-' + page).style.display = 'block';
-  const tb = document.getElementById('topbar-title');
-  if (tb) tb.textContent = PAGE_TITLES[page] || page;
-  if (lastFeeds.length) syncSecondaryPages(lastFeeds);
-}
-
-function syncSecondaryPages(feeds) {
-  if (!feeds.length) return;
-  const latest = feeds[feeds.length - 1];
-  const colHex = { RED:'#ff4d6a', DOUBLE_YELLOW:'#fbbf24', YELLOW:'#fbbf24', GREEN:'#22d38a' };
-  const colVar = { RED:'var(--red)', DOUBLE_YELLOW:'var(--yellow)', YELLOW:'var(--yellow)', GREEN:'var(--green)' };
-  const msgMap = { RED:'Train Must Halt', DOUBLE_YELLOW:'Caution Ahead', YELLOW:'Reduce Speed', GREEN:'Clear to Proceed' };
-  const s = latest.field1;
-
-  // Signal Monitor — 4-light tower
-  const ns = normaliseSignal(s) || 'RED';
-  const scfg = SIGNAL_CONFIG[ns];
-  ['dyellow','green','yellow','red'].forEach(function(c) {
-    const el = document.getElementById('sm-light-' + c);
-    if (!el) return;
-    const litId = c === 'dyellow' ? 'dyellow-top' : c;
-    const litClass = 'lit-' + (c.includes('yellow')||c==='dyellow' ? 'yellow' : c==='green' ? 'green' : 'red');
-    el.className = 'sig-light' + (scfg && scfg.lights.some(function(l){ return litId.startsWith(l)||l===litId; }) ? ' '+litClass : '');
-  });
-  const smChip = document.getElementById('sm-chip');
-  if (smChip) { smChip.textContent = scfg.label; smChip.className = 'pill '+(ns==='GREEN'?'green':ns==='RED'?'red':'yellow'); }
-  setText('sm-state',   scfg.label, colVar[s] || colVar['RED']);
-  setText('sm-meaning', scfg.meaning);
-  setText('sm-entry',   '#' + latest.entry_id);
-  setText('sm-time',    latest.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,''));
-
-  // IoT Channels
-  setText('iot-channel-id', CHANNEL_ID || 'Demo Mode');
-  setText('iot-api-key',    API_KEY ? API_KEY.slice(0,6)+'**********' : 'Demo Mode');
-  setText('iot-results',    feeds.length + ' entries');
-  const iotChip = document.getElementById('iot-status-chip');
-  if (iotChip) { iotChip.textContent = CHANNEL_ID ? 'Connected' : 'Demo Mode'; iotChip.className = 'pill green'; }
-
-  // Signal Log
-  const logBody = document.getElementById('logTableBody');
-  if (logBody) {
-    logBody.innerHTML = '';
-    [...feeds].reverse().forEach((f, i) => {
-      const ns3 = normaliseSignal(f.field1)||'RED';
-      const cfg3 = SIGNAL_CONFIG[ns3];
-      const cls3 = ns3==='GREEN'?'green':ns3==='RED'?'red':'yellow';
-      const tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td><span class="entry-num">#'+f.entry_id+'</span></td>'+
-        '<td><span class="ts-mono">'+f.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,'')+'</span></td>'+
-        '<td><span class="sig-chip '+cls3+'"><span class="sig-dot '+cls3+'"></span>'+cfg3.label+'</span></td>'+
-        '<td style="font-size:12px;color:var(--muted)">'+cfg3.meaning+'</td>'+
-        '<td style="font-size:12px;color:var(--muted)">'+(feeds.length - i)+'</td>';
-      logBody.appendChild(tr);
-    });
-  }
-  setText('log-count', feeds.length + ' entries');
-
-  // Reports
-  const total = feeds.length;
-  const redC  = feeds.filter(f=>normaliseSignal(f.field1)==='RED').length;
-  const yelC  = feeds.filter(f=>{ const n=normaliseSignal(f.field1); return n==='YELLOW'||n==='DOUBLE_YELLOW'; }).length;
-  const grnC  = feeds.filter(f=>normaliseSignal(f.field1)==='GREEN').length;
-  setText('rp-red',        redC,  colVar.RED);
-  setText('rp-yellow',     yelC,  colVar.YELLOW);
-  setText('rp-green',      grnC,  colVar.GREEN);
-  setText('rp-red-pct',    Math.round(redC/total*100)+'%');
-  setText('rp-yellow-pct', Math.round(yelC/total*100)+'%');
-  setText('rp-green-pct',  Math.round(grnC/total*100)+'%');
-  const rpCtx = document.getElementById('reportChart');
-  if (rpCtx) {
-    if (window._rpChart) window._rpChart.destroy();
-    window._rpChart = new Chart(rpCtx.getContext('2d'), {
-      type:'bar',
-      data:{ labels:['RED — Stop','YELLOW — Caution','GREEN — Proceed'],
-             datasets:[{ data:[redC,yelC,grnC], backgroundColor:['rgba(255,77,106,0.7)','rgba(251,191,36,0.7)','rgba(34,211,138,0.7)'], borderColor:['#ff4d6a','#fbbf24','#22d38a'], borderWidth:2, borderRadius:8 }]},
-      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-                scales:{ x:{ticks:{color:'#6b7a99'},grid:{color:'rgba(255,255,255,0.04)'}}, y:{ticks:{color:'#6b7a99'},grid:{color:'rgba(255,255,255,0.04)'}} }}
-    });
-  }
-
-  // Timeline
-  const tl = document.getElementById('timeline-list');
-  if (tl) {
-    tl.innerHTML = '';
-    feeds.forEach((f, i) => {
-      const isLast = i === feeds.length - 1;
-      const div = document.createElement('div');
-      div.style.cssText = 'display:flex;gap:16px;';
-      div.innerHTML =
-        '<div style="display:flex;flex-direction:column;align-items:center;">'+
-          '<div style="width:14px;height:14px;border-radius:50%;background:'+({RED:'#ff4d6a',DOUBLE_YELLOW:'#fbbf24',YELLOW:'#fbbf24',GREEN:'#22d38a'}[normaliseSignal(f.field1)]||'#ff4d6a')+';box-shadow:0 0 8px '+({RED:'#ff4d6a',DOUBLE_YELLOW:'#fbbf24',YELLOW:'#fbbf24',GREEN:'#22d38a'}[normaliseSignal(f.field1)]||'#ff4d6a')+';flex-shrink:0;margin-top:3px;"></div>'+
-          (isLast?'':'<div style="width:2px;flex:1;background:rgba(255,255,255,0.06);margin:4px 0;min-height:28px;"></div>')+
-        '</div>'+
-        '<div style="flex:1;padding-bottom:'+(isLast?'0':'18px')+';border-bottom:'+(isLast?'none':'1px solid rgba(255,255,255,0.04)')+';">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">'+
-            '<span style="font-family:Sora,sans-serif;font-weight:700;font-size:13px;color:'+colHex[f.field1]+'">'+f.field1+' — '+(msgMap[f.field1]||'')+'</span>'+
-            '<span style="font-size:11px;color:var(--muted);font-family:monospace">Entry #'+f.entry_id+'</span>'+
-          '</div>'+
-          '<div style="font-size:11px;color:var(--muted);">'+f.created_at.replace('T',' ').replace('Z','').replace(/[+-]\d{2}:\d{2}$/,'')+'</div>'+
-        '</div>';
-      tl.appendChild(div);
-    });
-  }
-}
-
-function setText(id, val, color) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = val;
-  if (color) el.style.color = color;
-}
-
-function applySettings() {
-  const cid = document.getElementById('set-channel').value.trim();
-  const key = document.getElementById('set-apikey').value.trim();
-  const res = parseInt(document.getElementById('set-results').value) || 20;
-  if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
-  CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
-  document.getElementById('channelLabel').textContent = 'Channel: '+CHANNEL_ID+' · ThinkSpeak IoT · field1';
-  fetchData(); startAutoRefresh();
-  showToast('Settings saved! Fetching data...');
-}
-
-/* ══════════════════════════════════════
-   TOPBAR DROPDOWN LOGIC
-══════════════════════════════════════ */
-function toggleDropdown(id) {
-  const all = ['avatar-dropdown'];
-  all.forEach(did => {
-    const el = document.getElementById(did);
-    if (!el) return;
-    if (did === id) {
-      el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    } else {
-      el.style.display = 'none';
+        body.appendChild(tr);
+      });
     }
-  });
-}
 
-// Close dropdowns on outside click
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.topbar-right')) {
-    ['avatar-dropdown'].forEach(id => {
+    /* ══════════════════════════════════════
+       AUTO REFRESH
+    ══════════════════════════════════════ */
+    let AUTO_REFRESH_SEC = 5;
+
+    function startAutoRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
+      if (countdownTimer) clearInterval(countdownTimer);
+      refreshTimer = setInterval(() => { fetchData(); }, AUTO_REFRESH_SEC * 1000);
+      resetCountdown();
+    }
+
+    function toggleRefreshMenu(e) {
+      if (e) e.stopPropagation();
+      const d = document.getElementById('refreshModal');
+      if (d) d.style.display = 'flex';
+    }
+
+    function setRefreshTime(sec) {
+      AUTO_REFRESH_SEC = sec;
+      const display = document.getElementById('refresh-display-value');
+      if (display) display.textContent = sec;
+      const d = document.getElementById('refreshModal');
+      if (d) d.style.display = 'none';
+      saveUserData();
+      startAutoRefresh();
+      showToast('Auto refresh set to ' + sec + 's');
+    }
+
+    function resetCountdown() {
+      countdown = AUTO_REFRESH_SEC;
+      if (countdownTimer) clearInterval(countdownTimer);
+      document.getElementById('countdown').textContent = countdown + 's';
+      countdownTimer = setInterval(() => {
+        countdown--;
+        document.getElementById('countdown').textContent = countdown + 's';
+        if (countdown <= 0) { countdown = AUTO_REFRESH_SEC; }
+      }, 1000);
+    }
+    /* ══════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════ */
+    const PAGE_TITLES = {
+      'dashboard': 'Dashboard',
+      'signal-monitor': 'Signal Monitor',
+      'iot-channels': 'IoT Channels',
+      'signal-log': 'Signal Log',
+      'reports': 'Reports',
+      'timeline': 'Timeline',
+      'settings': 'Settings',
+    };
+
+    let lastFeeds = [];
+
+    function navigate(el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      const page = el.dataset.page;
+      document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
+      document.getElementById('page-' + page).style.display = 'block';
+      const tb = document.getElementById('topbar-title');
+      if (tb) tb.textContent = PAGE_TITLES[page] || page;
+      if (page === 'settings') updateAccountDetails();
+      if (lastFeeds.length) syncSecondaryPages(lastFeeds);
+    }
+
+    function syncSecondaryPages(feeds) {
+      if (!feeds.length) return;
+      const latest = feeds[feeds.length - 1];
+      const colHex = { RED: '#ff4d6a', DOUBLE_YELLOW: '#fbbf24', YELLOW: '#fbbf24', GREEN: '#22d38a' };
+      const colVar = { RED: 'var(--red)', DOUBLE_YELLOW: 'var(--yellow)', YELLOW: 'var(--yellow)', GREEN: 'var(--green)' };
+      const msgMap = { RED: 'Train Must Halt', DOUBLE_YELLOW: 'Caution Ahead', YELLOW: 'Reduce Speed', GREEN: 'Clear to Proceed' };
+      const s = latest.field1;
+
+      // Signal Monitor — 4-light tower
+      const ns = normaliseSignal(s) || 'RED';
+      const scfg = SIGNAL_CONFIG[ns];
+      ['dyellow', 'green', 'yellow', 'red'].forEach(function (c) {
+        const el = document.getElementById('sm-light-' + c);
+        if (!el) return;
+        const litId = c === 'dyellow' ? 'dyellow-top' : c;
+        const litClass = 'lit-' + (c.includes('yellow') || c === 'dyellow' ? 'yellow' : c === 'green' ? 'green' : 'red');
+        el.className = 'sig-light' + (scfg && scfg.lights.some(function (l) { return litId.startsWith(l) || l === litId; }) ? ' ' + litClass : '');
+      });
+      const smChip = document.getElementById('sm-chip');
+      if (smChip) { smChip.textContent = scfg.label; smChip.className = 'pill ' + (ns === 'GREEN' ? 'green' : ns === 'RED' ? 'red' : 'yellow'); }
+      setText('sm-state', scfg.label, colVar[s] || colVar['RED']);
+      setText('sm-meaning', scfg.meaning);
+      setText('sm-entry', '#' + latest.entry_id);
+      setText('sm-time', latest.created_at.replace('T', ' ').replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, ''));
+
+      // IoT Channels
+      setText('iot-channel-id', CHANNEL_ID || 'Demo Mode');
+      setText('iot-api-key', API_KEY ? API_KEY.slice(0, 6) + '**********' : 'Demo Mode');
+      setText('iot-results', feeds.length + ' entries');
+      const iotChip = document.getElementById('iot-status-chip');
+      if (iotChip) { iotChip.textContent = CHANNEL_ID ? 'Connected' : 'Demo Mode'; iotChip.className = 'pill green'; }
+
+      // Signal Log
+      const logBody = document.getElementById('logTableBody');
+      if (logBody) {
+        logBody.innerHTML = '';
+        [...feeds].reverse().forEach((f, i) => {
+          const ns3 = normaliseSignal(f.field1) || 'RED';
+          const cfg3 = SIGNAL_CONFIG[ns3];
+          const cls3 = ns3 === 'GREEN' ? 'green' : ns3 === 'RED' ? 'red' : 'yellow';
+          const tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td><span class="entry-num">#' + f.entry_id + '</span></td>' +
+            '<td><span class="ts-mono">' + f.created_at.replace('T', ' ').replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, '') + '</span></td>' +
+            '<td><span class="sig-chip ' + cls3 + '"><span class="sig-dot ' + cls3 + '"></span>' + cfg3.label + '</span></td>' +
+            '<td style="font-size:12px;color:var(--muted)">' + cfg3.meaning + '</td>' +
+            '<td style="font-size:12px;color:var(--muted)">' + (feeds.length - i) + '</td>';
+          logBody.appendChild(tr);
+        });
+      }
+      setText('log-count', feeds.length + ' entries');
+
+      // Reports
+      const total = feeds.length;
+      const redC = feeds.filter(f => normaliseSignal(f.field1) === 'RED').length;
+      const dyelC = feeds.filter(f => normaliseSignal(f.field1) === 'DOUBLE_YELLOW').length;
+      const yelC = feeds.filter(f => normaliseSignal(f.field1) === 'YELLOW').length;
+      const grnC = feeds.filter(f => normaliseSignal(f.field1) === 'GREEN').length;
+
+      setText('rp-red', redC, colVar.RED);
+      setText('rp-dyellow', dyelC, '#fbbf24');
+      setText('rp-yellow', yelC, colVar.YELLOW);
+      setText('rp-green', grnC, colVar.GREEN);
+
+      setText('rp-red-pct', Math.round(redC / total * 100) + '%');
+      setText('rp-dyellow-pct', Math.round(dyelC / total * 100) + '%');
+      setText('rp-yellow-pct', Math.round(yelC / total * 100) + '%');
+      setText('rp-green-pct', Math.round(grnC / total * 100) + '%');
+
+      const rpCtx = document.getElementById('reportChart');
+      if (rpCtx) {
+        if (window._rpChart) window._rpChart.destroy();
+        window._rpChart = new Chart(rpCtx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['RED', 'DOUBLE YELLOW', 'YELLOW', 'GREEN'],
+            datasets: [{
+              data: [redC, dyelC, yelC, grnC],
+              backgroundColor: ['rgba(255,77,106,0.7)', 'rgba(251,191,36,0.7)', 'rgba(253,224,71,0.7)', 'rgba(34,211,138,0.7)'],
+              borderColor: ['#ff4d6a', '#fbbf24', '#fde047', '#22d38a'],
+              borderWidth: 2,
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+            scales: { x: { ticks: { color: '#6b7a99' }, grid: { color: 'rgba(255,255,255,0.04)' } }, y: { ticks: { color: '#6b7a99' }, grid: { color: 'rgba(255,255,255,0.04)' } } }
+          }
+        });
+      }
+
+      // Timeline
+      const tl = document.getElementById('timeline-list');
+      if (tl) {
+        tl.innerHTML = '';
+        feeds.forEach((f, i) => {
+          const isLast = i === feeds.length - 1;
+          const div = document.createElement('div');
+          div.style.cssText = 'display:flex;gap:16px;';
+          div.innerHTML =
+            '<div style="display:flex;flex-direction:column;align-items:center;">' +
+            '<div style="width:14px;height:14px;border-radius:50%;background:' + ({ RED: '#ff4d6a', DOUBLE_YELLOW: '#fbbf24', YELLOW: '#fbbf24', GREEN: '#22d38a' }[normaliseSignal(f.field1)] || '#ff4d6a') + ';box-shadow:0 0 8px ' + ({ RED: '#ff4d6a', DOUBLE_YELLOW: '#fbbf24', YELLOW: '#fbbf24', GREEN: '#22d38a' }[normaliseSignal(f.field1)] || '#ff4d6a') + ';flex-shrink:0;margin-top:3px;"></div>' +
+            (isLast ? '' : '<div style="width:2px;flex:1;background:rgba(255,255,255,0.06);margin:4px 0;min-height:28px;"></div>') +
+            '</div>' +
+            '<div style="flex:1;padding-bottom:' + (isLast ? '0' : '18px') + ';border-bottom:' + (isLast ? 'none' : '1px solid rgba(255,255,255,0.04)') + ';">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">' +
+            '<span style="font-family:Sora,sans-serif;font-weight:700;font-size:13px;color:' + colHex[f.field1] + '">' + f.field1 + ' — ' + (msgMap[f.field1] || '') + '</span>' +
+            '<span style="font-size:11px;color:var(--muted);font-family:monospace">Entry #' + f.entry_id + '</span>' +
+            '</div>' +
+            '<div style="font-size:11px;color:var(--muted);">' + f.created_at.replace('T', ' ').replace('Z', '').replace(/[+-]\d{2}:\d{2}$/, '') + '</div>' +
+            '</div>';
+          tl.appendChild(div);
+        });
+      }
+    }
+
+    function setText(id, val, color) {
       const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
+      if (!el) return;
+      el.textContent = val;
+      if (color) el.style.color = color;
+    }
+
+    function applySettings() {
+      const cid = document.getElementById('set-channel').value.trim();
+      const key = document.getElementById('set-apikey').value.trim();
+      const res = parseInt(document.getElementById('set-results').value) || 20;
+      if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
+      CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
+      document.getElementById('channelLabel').textContent = 'Channel: ' + CHANNEL_ID + ' · ThingSpeak IoT · field1';
+      fetchData(); startAutoRefresh();
+      showToast('Settings saved! Fetching data...');
+    }
+
+    /* ══════════════════════════════════════
+       TOPBAR DROPDOWN LOGIC
+    ══════════════════════════════════════ */
+    function toggleDropdown(id) {
+      const all = ['avatar-dropdown'];
+      all.forEach(did => {
+        const el = document.getElementById(did);
+        if (!el) return;
+        if (did === id) {
+          el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
+
+    /* ══════════════════════════════════════
+       CHANNEL SWITCHER MODAL
+    ══════════════════════════════════════ */
+    function openChannelModal() {
+      renderChannelModal();
+      document.getElementById('channelSwitcherModal').style.display = 'flex';
+      const av = document.getElementById('avatar-dropdown');
+      if (av) av.style.display = 'none';
+    }
+
+    function closeChannelModal() {
+      document.getElementById('channelSwitcherModal').style.display = 'none';
+    }
+
+    function renderChannelModal() {
+      const list = document.getElementById('ch-modal-list');
+      const counter = document.getElementById('ch-modal-count');
+      if (!list) return;
+      if (counter) {
+        counter.textContent = channels.length
+          ? channels.length + ' channel' + (channels.length !== 1 ? 's' : '') + ' saved'
+          : 'No channels added yet';
+      }
+      if (channels.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px;">No channels yet — add one below</div>';
+        return;
+      }
+      list.innerHTML = '';
+      channels.forEach(function (ch, i) {
+        const isActive = i === activeChannelIdx;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:12px;cursor:pointer;transition:background 0.15s;border:1px solid '
+          + (isActive ? 'rgba(79,124,255,0.35)' : 'rgba(255,255,255,0.05)')
+          + ';background:' + (isActive ? 'rgba(79,124,255,0.1)' : 'rgba(255,255,255,0.03)') + ';';
+        row.onmouseover = function () { if (!isActive) this.style.background = 'rgba(255,255,255,0.06)'; };
+        row.onmouseout = function () { if (!isActive) this.style.background = 'rgba(255,255,255,0.03)'; };
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">' + ch.icon + '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + ch.name + '</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:monospace;">ID: ' + ch.channelId + '</div>' +
+          '</div>' +
+          (isActive ? '<div style="font-size:10px;font-weight:700;letter-spacing:0.5px;padding:3px 9px;border-radius:20px;background:rgba(79,124,255,0.2);color:var(--accent1);border:1px solid rgba(79,124,255,0.3);">ACTIVE</div>' : '') +
+          (!isActive ? '<button onclick="event.stopPropagation();switchChannel(' + i + ');closeChannelModal();" style="font-size:11px;font-weight:600;padding:5px 13px;border-radius:8px;background:var(--accent1);color:#fff;border:none;cursor:pointer;">Switch</button>' : '') +
+          '<button onclick="event.stopPropagation();deleteChannel(' + i + ');renderChannelModal();" style="font-size:12px;padding:5px 10px;border-radius:8px;background:rgba(255,77,106,0.1);color:var(--red);border:1px solid rgba(255,77,106,0.2);cursor:pointer;">✕</button>';
+        list.appendChild(row);
+      });
+    }
+
+    function toggleChannelDropdown() {
+      const dd = document.getElementById('channel-dropdown');
+      if (!dd) return;
+      const isHidden = dd.style.display === 'none' || dd.style.display === '';
+      // close avatar dropdown
+      const av = document.getElementById('avatar-dropdown');
+      if (av) av.style.display = 'none';
+      if (isHidden) { renderChannelList(); dd.style.display = 'block'; }
+      else { dd.style.display = 'none'; }
+    }
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.topbar-right')) {
+        ['avatar-dropdown', 'channel-dropdown'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+      }
     });
-  }
-});
-
-function navToPage(page) {
-  ['avatar-dropdown'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  const navItem = document.querySelector('.nav-item[data-page="'+page+'"]');
-  if (navItem) navigate(navItem);
-}
-
-function navToSettings() {
-  navToPage('settings');
-}
 
 
+    function navToPage(page) {
+      ['avatar-dropdown'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      const navItem = document.querySelector('.nav-item[data-page="' + page + '"]');
+      if (navItem) navigate(navItem);
+    }
 
-/* ══════════════════════════════════════
-   CHANNEL MANAGEMENT
-══════════════════════════════════════ */
-let channels = [];
-let activeChannelIdx = -1;
+    function navToSettings() {
+      navToPage('settings');
+    }
 
-function openAddChannel() {
-  ['bell-dropdown','grid-dropdown','avatar-dropdown','channel-dropdown'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
-  document.getElementById('addChannelModal').style.display = 'flex';
-  document.getElementById('ac-name').value = '';
-  document.getElementById('ac-id').value = '';
-  document.getElementById('ac-key').value = '';
-  document.getElementById('ac-icon').value = '🚆';
-}
 
-function saveChannel() {
-  const name = document.getElementById('ac-name').value.trim();
-  const cid  = document.getElementById('ac-id').value.trim();
-  const key  = document.getElementById('ac-key').value.trim();
-  const icon = document.getElementById('ac-icon').value.trim() || '🚆';
-  if (!name || !cid || !key) { showToast('Please fill in all fields'); return; }
-  channels.push({ id: Date.now(), name, channelId: cid, apiKey: key, icon });
-  document.getElementById('addChannelModal').style.display = 'none';
-  renderChannelList();
-  switchChannel(channels.length - 1);
-  showToast('Channel "' + name + '" added!');
-}
 
-function renderChannelList() {
-  const list = document.getElementById('channel-list');
-  if (!list) return;
-  if (channels.length === 0) {
-    list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">No channels yet — click + Add</div>';
-    return;
-  }
-  list.innerHTML = '';
-  channels.forEach(function(ch, i) {
-    const isActive = i === activeChannelIdx;
-    const div = document.createElement('div');
-    div.className = 'channel-item' + (isActive ? ' active-ch' : '');
-    div.innerHTML =
-      '<div class="ch-icon">' + ch.icon + '</div>' +
-      '<div class="ch-info">' +
-        '<div class="ch-name">' + ch.name + '</div>' +
-        '<div class="ch-meta">ID: ' + ch.channelId + (isActive ? ' · Active' : '') + '</div>' +
-      '</div>' +
-      '<div class="ch-status-dot ' + (isActive ? 'online' : 'offline') + '"></div>' +
-      '<div class="ch-actions">' +
-        '<div class="ch-action-btn del" title="Remove" onclick="event.stopPropagation();deleteChannel(' + i + ')">✕</div>' +
-      '</div>';
-    div.onclick = function(){ switchChannel(i); };
-    list.appendChild(div);
-  });
-}
+    /* ══════════════════════════════════════
+       CHANNEL MANAGEMENT
+    ══════════════════════════════════════ */
+    let channels = [];
+    let activeChannelIdx = -1;
 
-function switchChannel(idx) {
-  if (idx < 0 || idx >= channels.length) return;
-  activeChannelIdx = idx;
-  const ch = channels[idx];
-  CHANNEL_ID = ch.channelId;
-  API_KEY    = ch.apiKey;
-  RESULTS    = 20;
-  const label = document.getElementById('channelLabel');
-  if (label) label.textContent = ch.name + '  ·  Channel ' + ch.channelId + '  ·  field1';
-  ['channel-dropdown','avatar-dropdown'].forEach(function(id){ const e=document.getElementById(id); if(e) e.style.display='none'; });
-  renderChannelList();
-  fetchData();
-  startAutoRefresh();
-  showToast('Switched to ' + ch.icon + ' ' + ch.name);
-}
+    function openAddChannel() {
+      ['bell-dropdown', 'grid-dropdown', 'avatar-dropdown', 'channel-dropdown'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+      document.getElementById('addChannelModal').style.display = 'flex';
+      document.getElementById('ac-name').value = '';
+      document.getElementById('ac-id').value = '';
+      document.getElementById('ac-key').value = '';
+      document.getElementById('ac-icon').value = '🚆';
+    }
 
-function deleteChannel(idx) {
-  const name = channels[idx].name;
-  channels.splice(idx, 1);
-  if (activeChannelIdx === idx) {
-    activeChannelIdx = -1;
-    CHANNEL_ID = ''; API_KEY = '';
-    const label = document.getElementById('channelLabel');
-    if (label) label.textContent = 'No channel active — add a channel';
-    if (channels.length > 0) switchChannel(0);
-  } else if (activeChannelIdx > idx) {
-    activeChannelIdx--;
-  }
-  renderChannelList();
-  showToast('Channel "' + name + '" removed');
-}
+    function saveChannel() {
+      const name = document.getElementById('ac-name').value.trim();
+      const cid = document.getElementById('ac-id').value.trim();
+      const key = document.getElementById('ac-key').value.trim();
+      const icon = document.getElementById('ac-icon').value.trim() || '🚆';
+      if (!name || !cid || !key) { showToast('Please fill in all fields'); return; }
+      channels.push({ id: Date.now(), name, channelId: cid, apiKey: key, icon });
+      document.getElementById('addChannelModal').style.display = 'none';
+      renderChannelList();
+      switchChannel(channels.length - 1);
+      showToast('Channel "' + name + '" added!');
+    }
 
-function maybeAddCurrentAsChannel() {
-  if (CHANNEL_ID && API_KEY && channels.length === 0) {
-    channels.push({ id: Date.now(), name: 'My Channel', channelId: CHANNEL_ID, apiKey: API_KEY, icon: '🚆' });
-    activeChannelIdx = 0;
-    renderChannelList();
-  }
-}
+    function renderChannelList() {
+      const list = document.getElementById('channel-list');
+      if (!list) return;
+      if (channels.length === 0) {
+        list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">No channels yet</div>';
+        return;
+      }
+      list.innerHTML = '';
+      channels.forEach(function (ch, i) {
+        const isActive = i === activeChannelIdx;
+        const div = document.createElement('div');
+        div.className = 'channel-item' + (isActive ? ' active-ch' : '');
+        div.innerHTML =
+          '<div class="ch-icon">' + ch.icon + '</div>' +
+          '<div class="ch-info">' +
+          '<div class="ch-name">' + ch.name + '</div>' +
+          '<div class="ch-meta">ID: ' + ch.channelId + (isActive ? ' · Active' : '') + '</div>' +
+          '</div>' +
+          '<div class="ch-status-dot ' + (isActive ? 'online' : 'offline') + '"></div>';
+        div.onclick = function () { switchChannel(i); };
+        list.appendChild(div);
+      });
+    }
 
-/* ══════════════════════════════════════
-   AUTH & PERSISTENCE  (localStorage)
-   Storage:
-     rs_users   → { email: { name, passwordHash, channels[], results } }
-     rs_session → { email, name }
-══════════════════════════════════════ */
+    function switchChannel(idx) {
+      if (idx < 0 || idx >= channels.length) return;
+      activeChannelIdx = idx;
+      const ch = channels[idx];
+      CHANNEL_ID = ch.channelId;
+      API_KEY = ch.apiKey;
+      RESULTS = 20;
+      const label = document.getElementById('channelLabel');
+      if (label) label.textContent = ch.name + '  ·  Channel ' + ch.channelId + '  ·  field1';
+      ['channel-dropdown', 'avatar-dropdown'].forEach(function (id) { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+      renderChannelList();
+      fetchData();
+      startAutoRefresh();
+      showToast('Switched to ' + ch.icon + ' ' + ch.name);
+    }
 
-function hashPass(p) {
-  var h = 0;
-  for (var i = 0; i < p.length; i++) { h = Math.imul(31, h) + p.charCodeAt(i) | 0; }
-  return 'h' + Math.abs(h).toString(36);
-}
+    function deleteChannel(idx) {
+      const name = channels[idx].name;
+      channels.splice(idx, 1);
+      if (activeChannelIdx === idx) {
+        activeChannelIdx = -1;
+        CHANNEL_ID = ''; API_KEY = '';
+        const label = document.getElementById('channelLabel');
+        if (label) label.textContent = 'No channel active — add a channel';
+        if (channels.length > 0) switchChannel(0);
+      } else if (activeChannelIdx > idx) {
+        activeChannelIdx--;
+      }
+      renderChannelList();
+      showToast('Channel "' + name + '" removed');
+    }
 
-function getUsers()     { try { return JSON.parse(localStorage.getItem('rs_users') || '{}'); }  catch(e) { return {}; } }
-function saveUsers(u)   { localStorage.setItem('rs_users', JSON.stringify(u)); }
-function getSession()   { try { return JSON.parse(localStorage.getItem('rs_session') || 'null'); } catch(e) { return null; } }
-function saveSession(s) { localStorage.setItem('rs_session', JSON.stringify(s)); }
-function clearSession() { localStorage.removeItem('rs_session'); }
+    function maybeAddCurrentAsChannel() {
+      if (CHANNEL_ID && API_KEY && channels.length === 0) {
+        channels.push({ id: Date.now(), name: 'My Channel', channelId: CHANNEL_ID, apiKey: API_KEY, icon: '🚆' });
+        activeChannelIdx = 0;
+        renderChannelList();
+      }
+    }
 
-function showLogin() {
-  document.getElementById('registerModal').style.display = 'none';
-  document.getElementById('loginModal').style.display    = 'flex';
-}
-function showRegister() {
-  document.getElementById('loginModal').style.display    = 'none';
-  document.getElementById('registerModal').style.display = 'flex';
-}
-function hideAuthModals() {
-  document.getElementById('loginModal').style.display    = 'none';
-  document.getElementById('registerModal').style.display = 'none';
-}
+    /* ══════════════════════════════════════
+       AUTH & PERSISTENCE  (localStorage)
+       Storage:
+         rs_users   → { email: { name, passwordHash, channels[], results } }
+         rs_session → { email, name }
+    ══════════════════════════════════════ */
 
-function doLogin() {
-  var email = document.getElementById('login-email').value.trim().toLowerCase();
-  var pass  = document.getElementById('login-password').value;
-  var errEl = document.getElementById('login-error');
-  errEl.style.display = 'none';
-  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
-  var users = getUsers();
-  var user  = users[email];
-  if (!user || user.passwordHash !== hashPass(pass)) {
-    errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return;
-  }
-  saveSession({ email: email, name: user.name });
-  hideAuthModals();
-  onLoggedIn(email, user);
-}
+    function hashPass(p) {
+      var h = 0;
+      for (var i = 0; i < p.length; i++) { h = Math.imul(31, h) + p.charCodeAt(i) | 0; }
+      return 'h' + Math.abs(h).toString(36);
+    }
 
-function doRegister() {
-  var name    = document.getElementById('reg-name').value.trim();
-  var email   = document.getElementById('reg-email').value.trim().toLowerCase();
-  var pass    = document.getElementById('reg-password').value;
-  var confirm = document.getElementById('reg-confirm').value;
-  var errEl   = document.getElementById('reg-error');
-  errEl.style.display = 'none';
-  if (!name || !email || !pass) { errEl.textContent = 'All fields are required.'; errEl.style.display = 'block'; return; }
-  if (pass.length < 6)  { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
-  if (pass !== confirm) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
-  var users = getUsers();
-  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
-  users[email] = { name: name, passwordHash: hashPass(pass), channels: [], results: 20 };
-  saveUsers(users);
-  saveSession({ email: email, name: name });
-  hideAuthModals();
-  onLoggedIn(email, users[email]);
-  showToast('Account created! Welcome, ' + name + ' \u2728');
-}
+    function getUsers() { try { return JSON.parse(localStorage.getItem('rs_users') || '{}'); } catch (e) { return {}; } }
+    function saveUsers(u) { localStorage.setItem('rs_users', JSON.stringify(u)); }
+    function getSession() { try { return JSON.parse(localStorage.getItem('rs_session') || 'null'); } catch (e) { return null; } }
+    function saveSession(s) { localStorage.setItem('rs_session', JSON.stringify(s)); }
+    function clearSession() { localStorage.removeItem('rs_session'); }
 
-function doSignOut() {
-  clearSession();
-  if (refreshTimer)   clearInterval(refreshTimer);
-  if (countdownTimer) clearInterval(countdownTimer);
-  CHANNEL_ID = ''; API_KEY = '';
-  channels = []; activeChannelIdx = -1;
-  renderChannelList();
-  var ids = ['s-total','s-red','s-yellow','s-green'];
-  ids.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = '\u2013'; });
-  var lbl = document.getElementById('channelLabel');
-  if (lbl) lbl.textContent = 'Not connected';
-  showLogin();
-}
+    function showLogin() {
+      document.getElementById('registerModal').style.display = 'none';
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+    function showRegister() {
+      document.getElementById('loginModal').style.display = 'none';
+      document.getElementById('registerModal').style.display = 'flex';
+    }
+    function hideAuthModals() {
+      document.getElementById('loginModal').style.display = 'none';
+      document.getElementById('registerModal').style.display = 'none';
+    }
 
-function onLoggedIn(email, user) {
-  // Update topbar & sidebar with real name
-  document.querySelectorAll('.tb-avatar').forEach(function(el) {
-    el.textContent = user.name.charAt(0).toUpperCase();
-  });
-  document.querySelectorAll('.avatar-name').forEach(function(el) { el.textContent = user.name; });
-  document.querySelectorAll('.avatar-role').forEach(function(el) { el.textContent = email; });
-  // Also update sidebar bottom
-  var sidebarName = document.querySelector('.avatar-info .avatar-name');
-  var sidebarRole = document.querySelector('.avatar-info .avatar-role');
-  if (sidebarName) sidebarName.textContent = user.name;
-  if (sidebarRole) sidebarRole.textContent = 'Signal Operator';
+    function doLogin() {
+      var email = document.getElementById('login-email').value.trim().toLowerCase();
+      var pass = document.getElementById('login-password').value;
+      var errEl = document.getElementById('login-error');
+      errEl.style.display = 'none';
+      if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.style.display = 'block'; return; }
+      var users = getUsers();
+      var user = users[email];
+      if (!user || user.passwordHash !== hashPass(pass)) {
+        errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return;
+      }
+      saveSession({ email: email, name: user.name });
+      hideAuthModals();
+      onLoggedIn(email, user);
+    }
 
-  channels = (user.channels || []).map(function(ch) { return Object.assign({}, ch); });
-  RESULTS  = user.results || 20;
-  activeChannelIdx = -1;
-  renderChannelList();
-  updateIotPageInfo();
+    function doRegister() {
+      var name = document.getElementById('reg-name').value.trim();
+      var email = document.getElementById('reg-email').value.trim().toLowerCase();
+      var pass = document.getElementById('reg-password').value;
+      var confirm = document.getElementById('reg-confirm').value;
+      var errEl = document.getElementById('reg-error');
+      errEl.style.display = 'none';
+      if (!name || !email || !pass) { errEl.textContent = 'All fields are required.'; errEl.style.display = 'block'; return; }
+      if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+      if (pass !== confirm) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+      var users = getUsers();
+      if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
+      users[email] = { name: name, passwordHash: hashPass(pass), channels: [], results: 20 };
+      saveUsers(users);
+      saveSession({ email: email, name: name });
+      hideAuthModals();
+      onLoggedIn(email, users[email]);
+      showToast('Account created! Welcome, ' + name + ' \u2728');
+    }
 
-  if (channels.length > 0) {
-    switchChannel(0);
-  } else {
-    showToast('Welcome ' + user.name + '! Go to IoT Channels to add your ThinkSpeak channel.');
-  }
-}
+    function doSignOut() {
+      clearSession();
+      if (refreshTimer) clearInterval(refreshTimer);
+      if (countdownTimer) clearInterval(countdownTimer);
+      CHANNEL_ID = ''; API_KEY = '';
+      channels = []; activeChannelIdx = -1;
+      renderChannelList();
+      var ids = ['s-total', 's-red', 's-yellow', 's-green'];
+      ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.textContent = '\u2013'; });
+      var lbl = document.getElementById('channelLabel');
+      if (lbl) lbl.textContent = 'Not connected';
+      showLogin();
+    }
 
-function saveUserData() {
-  var session = getSession();
-  if (!session) return;
-  var users = getUsers();
-  if (!users[session.email]) return;
-  users[session.email].channels = channels.map(function(ch) { return Object.assign({}, ch); });
-  users[session.email].results  = RESULTS;
-  saveUsers(users);
-}
+    function onLoggedIn(email, user) {
+      // Update topbar & sidebar with real name
+      document.querySelectorAll('.tb-avatar').forEach(function (el) {
+        el.textContent = user.name.charAt(0).toUpperCase();
+      });
+      document.querySelectorAll('.avatar-name').forEach(function (el) { el.textContent = user.name; });
+      document.querySelectorAll('.avatar-role').forEach(function (el) { el.textContent = email; });
+      // Also update sidebar bottom
+      var sidebarName = document.querySelector('.avatar-info .avatar-name');
+      var sidebarRole = document.querySelector('.avatar-info .avatar-role');
+      if (sidebarName) sidebarName.textContent = user.name;
+      if (sidebarRole) sidebarRole.textContent = 'Signal Operator';
 
-/* ── Override connectThinkSpeak ──────────────────────────────────────────── */
-function connectThinkSpeak() {
-  var cid  = document.getElementById('inputChannelId').value.trim();
-  var akey = document.getElementById('inputApiKey').value.trim();
-  var res  = parseInt(document.getElementById('inputResults').value) || 20;
-  if (!cid || !akey) { showToast('Please enter Channel ID and API Key'); return; }
-  CHANNEL_ID = cid; API_KEY = akey; RESULTS = res;
-  document.getElementById('configModal').style.display = 'none';
-  var lbl = document.getElementById('channelLabel');
-  if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThinkSpeak IoT \u00b7 field1';
-  maybeAddCurrentAsChannel();
-  saveUserData();
-  fetchData();
-  startAutoRefresh();
-}
+      channels = (user.channels || []).map(function (ch) { return Object.assign({}, ch); });
+      RESULTS = user.results || 20;
+      AUTO_REFRESH_SEC = user.autoRefreshSec || 5;
+      var rv = document.getElementById('refresh-display-value');
+      if (rv) rv.textContent = AUTO_REFRESH_SEC;
+      activeChannelIdx = -1;
+      renderChannelList();
+      updateIotPageInfo();
 
-/* ── Override saveChannel ────────────────────────────────────────────────── */
-function saveChannel() {
-  var name = document.getElementById('ac-name').value.trim();
-  var cid  = document.getElementById('ac-id').value.trim();
-  var key  = document.getElementById('ac-key').value.trim();
-  var icon = document.getElementById('ac-icon').value.trim() || '\uD83D\uDE86';
-  if (!name || !cid || !key) { showToast('Please fill in all fields'); return; }
-  channels.push({ id: Date.now(), name: name, channelId: cid, apiKey: key, icon: icon });
-  document.getElementById('addChannelModal').style.display = 'none';
-  saveUserData();
-  renderChannelList();
-  updateIotChannelsList();
-  switchChannel(channels.length - 1);
-  showToast('Channel "' + name + '" added and saved!');
-}
+      if (channels.length > 0) {
+        switchChannel(0);
+      } else {
+        showToast('Welcome ' + user.name + '! Go to IoT Channels to add your ThingSpeak channel.');
+      }
+    }
 
-/* ── Override deleteChannel ──────────────────────────────────────────────── */
-function deleteChannel(idx) {
-  var name = channels[idx].name;
-  channels.splice(idx, 1);
-  if (activeChannelIdx === idx) {
-    activeChannelIdx = -1; CHANNEL_ID = ''; API_KEY = '';
-    var lbl = document.getElementById('channelLabel');
-    if (lbl) lbl.textContent = 'No channel active \u2014 add a channel';
-    if (channels.length > 0) switchChannel(0);
-  } else if (activeChannelIdx > idx) {
-    activeChannelIdx--;
-  }
-  saveUserData();
-  renderChannelList();
-  updateIotChannelsList();
-  showToast('Channel "' + name + '" removed');
-}
+    function saveUserData() {
+      var session = getSession();
+      if (!session) return;
+      var users = getUsers();
+      if (!users[session.email]) return;
+      users[session.email].channels = channels.map(function (ch) { return Object.assign({}, ch); });
+      users[session.email].results = RESULTS;
+      users[session.email].autoRefreshSec = AUTO_REFRESH_SEC;
+      saveUsers(users);
+    }
 
-/* ── Override applySettings ──────────────────────────────────────────────── */
-function applySettings() {
-  var cid = document.getElementById('set-channel').value.trim();
-  var key = document.getElementById('set-apikey').value.trim();
-  var res = parseInt(document.getElementById('set-results').value) || 20;
-  if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
-  CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
-  var lbl = document.getElementById('channelLabel');
-  if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThinkSpeak IoT \u00b7 field1';
-  maybeAddCurrentAsChannel();
-  saveUserData();
-  fetchData(); startAutoRefresh();
-  showToast('Settings saved!');
-}
+    /* ── Override connectThingSpeak ──────────────────────────────────────────── */
+    function connectThingSpeak() {
+      var cid = document.getElementById('inputChannelId').value.trim();
+      var akey = document.getElementById('inputApiKey').value.trim();
+      var res = parseInt(document.getElementById('inputResults').value) || 20;
+      if (!cid || !akey) { showToast('Please enter Channel ID and API Key'); return; }
+      CHANNEL_ID = cid; API_KEY = akey; RESULTS = res;
+      document.getElementById('configModal').style.display = 'none';
+      var lbl = document.getElementById('channelLabel');
+      if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThingSpeak IoT \u00b7 field1';
+      maybeAddCurrentAsChannel();
+      saveUserData();
+      fetchData();
+      startAutoRefresh();
+    }
 
-/* ── IoT Channels page ───────────────────────────────────────────────────── */
-function updateIotPageInfo() {
-  setText('iot-channel-id', CHANNEL_ID || '\u2013');
-  setText('iot-api-key', API_KEY ? API_KEY.slice(0, 6) + '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' : '\u2013');
-  setText('iot-results', RESULTS + ' entries');
-  var chip = document.getElementById('iot-status-chip');
-  if (chip) { chip.textContent = CHANNEL_ID ? 'Connected' : 'No Channel'; chip.className = CHANNEL_ID ? 'pill green' : 'pill'; }
-  updateIotChannelsList();
-}
+    /* ── Override saveChannel ────────────────────────────────────────────────── */
+    function saveChannel() {
+      var name = document.getElementById('ac-name').value.trim();
+      var cid = document.getElementById('ac-id').value.trim();
+      var key = document.getElementById('ac-key').value.trim();
+      var icon = document.getElementById('ac-icon').value.trim() || '\uD83D\uDE86';
+      if (!name || !cid || !key) { showToast('Please fill in all fields'); return; }
+      channels.push({ id: Date.now(), name: name, channelId: cid, apiKey: key, icon: icon });
+      document.getElementById('addChannelModal').style.display = 'none';
+      saveUserData();
+      renderChannelList();
+      updateIotChannelsList();
+      switchChannel(channels.length - 1);
+      showToast('Channel "' + name + '" added and saved!');
+    }
 
-function updateIotChannelsList() {
-  var countEl = document.getElementById('iot-ch-count');
-  if (countEl) countEl.textContent = channels.length + ' channel' + (channels.length !== 1 ? 's' : '');
-  var container = document.getElementById('iot-channels-list');
-  if (!container) return;
-  if (channels.length === 0) {
-    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b style="color:var(--accent1)">+ Add Channel</b> to get started.</div>';
-    return;
-  }
-  container.innerHTML = '';
-  channels.forEach(function(ch, i) {
-    var isActive = (i === activeChannelIdx);
-    var div = document.createElement('div');
-    div.style.cssText = 'display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;' + (isActive ? 'background:rgba(79,124,255,0.08);border-left:3px solid var(--accent1);' : 'border-left:3px solid transparent;');
-    var activeBadge = isActive ? '<span style="font-size:10px;background:rgba(34,211,138,0.15);color:var(--green);padding:2px 8px;border-radius:10px;font-weight:600;margin-left:6px;">ACTIVE</span>' : '';
-    div.innerHTML =
-      '<div style="width:40px;height:40px;border-radius:11px;background:rgba(79,124,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">' + ch.icon + '</div>' +
-      '<div style="flex:1;min-width:0;">' +
-        '<div style="font-family:Sora,sans-serif;font-weight:700;font-size:14px;color:var(--white);">' + ch.name + activeBadge + '</div>' +
-        '<div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:monospace;">Channel ID: ' + ch.channelId + '</div>' +
-      '</div>' +
-      '<div style="display:flex;gap:8px;">' +
-        '<button onclick="event.stopPropagation();switchChannel(' + i + ')" style="background:rgba(79,124,255,0.12);border:1px solid rgba(79,124,255,0.3);color:var(--accent1);padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Switch</button>' +
-        '<button onclick="event.stopPropagation();deleteChannel(' + i + ')" style="background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.25);color:var(--red);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Remove</button>' +
-      '</div>';
-    div.onclick = function() { switchChannel(i); };
-    container.appendChild(div);
-  });
-}
+    /* ── Override deleteChannel ──────────────────────────────────────────────── */
+    function deleteChannel(idx) {
+      var name = channels[idx].name;
+      channels.splice(idx, 1);
+      if (activeChannelIdx === idx) {
+        activeChannelIdx = -1; CHANNEL_ID = ''; API_KEY = '';
+        var lbl = document.getElementById('channelLabel');
+        if (lbl) lbl.textContent = 'No channel active \u2014 add a channel';
+        if (channels.length > 0) switchChannel(0);
+      } else if (activeChannelIdx > idx) {
+        activeChannelIdx--;
+      }
+      saveUserData();
+      renderChannelList();
+      updateIotChannelsList();
+      showToast('Channel "' + name + '" removed');
+    }
 
-/* ── Boot: check existing session ────────────────────────────────────────── */
-function bootAuth() {
-  var session = getSession();
-  if (session) {
-    var users = getUsers();
-    var user  = users[session.email];
-    if (user) { onLoggedIn(session.email, user); return; }
-  }
-  showLogin();
-}
+    /* ── Override applySettings ──────────────────────────────────────────────── */
+    function applySettings() {
+      var cid = document.getElementById('set-channel').value.trim();
+      var key = document.getElementById('set-apikey').value.trim();
+      var res = parseInt(document.getElementById('set-results').value) || 20;
+      if (!cid || !key) { showToast('Please enter Channel ID and API Key'); return; }
+      CHANNEL_ID = cid; API_KEY = key; RESULTS = res;
+      var lbl = document.getElementById('channelLabel');
+      if (lbl) lbl.textContent = 'Channel: ' + CHANNEL_ID + ' \u00b7 ThingSpeak IoT \u00b7 field1';
+      maybeAddCurrentAsChannel();
+      saveUserData();
+      fetchData(); startAutoRefresh();
+      showToast('Settings saved!');
+    }
 
-window.addEventListener('DOMContentLoaded', function() { bootAuth(); });
+    /* ── IoT Channels page ───────────────────────────────────────────────────── */
+    function updateIotPageInfo() {
+      setText('iot-channel-id', CHANNEL_ID || '\u2013');
+      setText('iot-api-key', API_KEY ? API_KEY.slice(0, 6) + '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' : '\u2013');
+      setText('iot-results', RESULTS + ' entries');
+      var chip = document.getElementById('iot-status-chip');
+      if (chip) { chip.textContent = CHANNEL_ID ? 'Connected' : 'No Channel'; chip.className = CHANNEL_ID ? 'pill green' : 'pill'; }
+      updateIotChannelsList();
+    }
 
-</script>
+    function updateIotChannelsList() {
+      var countEl = document.getElementById('iot-ch-count');
+      if (countEl) countEl.textContent = channels.length + ' channel' + (channels.length !== 1 ? 's' : '');
+      var container = document.getElementById('iot-channels-list');
+      if (!container) return;
+      if (channels.length === 0) {
+        container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No channels yet. Click <b style="color:var(--accent1)">+ Add Channel</b> to get started.</div>';
+        return;
+      }
+      container.innerHTML = '';
+      channels.forEach(function (ch, i) {
+        var isActive = (i === activeChannelIdx);
+        var div = document.createElement('div');
+        div.style.cssText = 'display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;' + (isActive ? 'background:rgba(79,124,255,0.08);border-left:3px solid var(--accent1);' : 'border-left:3px solid transparent;');
+        var activeBadge = isActive ? '<span style="font-size:10px;background:rgba(34,211,138,0.15);color:var(--green);padding:2px 8px;border-radius:10px;font-weight:600;margin-left:6px;">ACTIVE</span>' : '';
+        div.innerHTML =
+          '<div style="width:40px;height:40px;border-radius:11px;background:rgba(79,124,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">' + ch.icon + '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-family:Sora,sans-serif;font-weight:700;font-size:14px;color:var(--white);">' + ch.name + activeBadge + '</div>' +
+          '<div style="font-size:11px;color:var(--muted);margin-top:3px;font-family:monospace;">Channel ID: ' + ch.channelId + '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;">' +
+          '<button onclick="event.stopPropagation();switchChannel(' + i + ')" style="background:rgba(79,124,255,0.12);border:1px solid rgba(79,124,255,0.3);color:var(--accent1);padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Switch</button>' +
+          '<button onclick="event.stopPropagation();deleteChannel(' + i + ')" style="background:rgba(255,77,106,0.1);border:1px solid rgba(255,77,106,0.25);color:var(--red);padding:7px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Remove</button>' +
+          '</div>';
+        div.onclick = function () { switchChannel(i); };
+        container.appendChild(div);
+      });
+    }
 
-<!-- ADD CHANNEL MODAL -->
-<div class="modal-overlay" id="addChannelModal" style="display:none;">
-  <div class="modal">
-    <h2>📡 Add Channel</h2>
-    <p>Add a ThinkSpeak channel to monitor. You can switch between channels anytime from the top bar.</p>
-    <div class="field-group">
-      <label>Channel Name</label>
-      <input type="text" id="ac-name" placeholder="e.g. Station Alpha - Track 1" />
-    </div>
-    <div class="field-group">
-      <label>Channel ID</label>
-      <input type="text" id="ac-id" placeholder="e.g. 2345678" />
-    </div>
-    <div class="field-group">
-      <label>Read API Key</label>
-      <input type="text" id="ac-key" placeholder="e.g. ABCDEF1234567890" />
-    </div>
-    <div class="field-group">
-      <label>Icon (emoji)</label>
-      <input type="text" id="ac-icon" placeholder="e.g. 🚆" maxlength="4" value="🚆" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="saveChannel()">＋ Add Channel</button>
-      <button class="btn-demo" onclick="document.getElementById('addChannelModal').style.display='none'">Cancel</button>
+    /* ── Update account details on Settings page ─────────────────────────────── */
+    function updateAccountDetails() {
+      var session = getSession();
+      if (!session) return;
+      var users = getUsers();
+      var user = users[session.email];
+      if (!user) return;
+      setText('account-name', user.name);
+      setText('account-email', session.email);
+      setText('account-channels', channels.length.toString());
+      setText('account-status', 'Active');
+      var setChannel = document.getElementById('set-channel');
+      var setApikey = document.getElementById('set-apikey');
+      var setResults = document.getElementById('set-results');
+      if (setChannel && CHANNEL_ID) setChannel.value = CHANNEL_ID;
+      if (setApikey && API_KEY) setApikey.value = API_KEY;
+      if (setResults) setResults.value = RESULTS;
+    }
+
+    /* ── Boot: check existing session ────────────────────────────────────────── */
+    function bootAuth() {
+      var session = getSession();
+      if (session) {
+        var users = getUsers();
+        var user = users[session.email];
+        if (user) { onLoggedIn(session.email, user); return; }
+      }
+      showLogin();
+    }
+
+    window.addEventListener('DOMContentLoaded', function () { bootAuth(); });
+
+  </script>
+
+  <!-- ADD CHANNEL MODAL -->
+  <div class="modal-overlay" id="addChannelModal" style="display:none;">
+    <div class="modal">
+      <h2>📡 Add Channel</h2>
+      <p>Add a ThingSpeak channel to monitor. You can switch between channels anytime from the top bar.</p>
+      <div class="field-group">
+        <label>Channel Name</label>
+        <input type="text" id="ac-name" placeholder="e.g. Station Alpha - Track 1" />
+      </div>
+      <div class="field-group">
+        <label>Channel ID</label>
+        <input type="text" id="ac-id" placeholder="e.g. 2345678" />
+      </div>
+      <div class="field-group">
+        <label>Read API Key</label>
+        <input type="text" id="ac-key" placeholder="e.g. ABCDEF1234567890" />
+      </div>
+      <div class="field-group">
+        <label>Icon (emoji)</label>
+        <input type="text" id="ac-icon" placeholder="e.g. 🚆" maxlength="4" value="🚆" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="saveChannel()">＋ Add Channel</button>
+        <button class="btn-demo"
+          onclick="document.getElementById('addChannelModal').style.display='none'">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
 
 </body>
-</html>
 
+</html>
