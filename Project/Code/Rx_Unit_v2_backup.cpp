@@ -8,13 +8,6 @@ WiFiClient client;
 HTTPClient http;
 
 // ─────────────────────────────────────────
-//  Hardware Pins
-// ─────────────────────────────────────────
-const int LED_RED    = 25;
-const int LED_YELLOW = 26;
-const int LED_GREEN  = 27;
-
-// ─────────────────────────────────────────
 //  ThingSpeak Config
 // ─────────────────────────────────────────
 const String THINGSPEAK_API_KEY = "12WTGAIJQYNRUL22"; // ThingSpeak Write API Key
@@ -131,17 +124,6 @@ void processQueue() {
 // ─────────────────────────────────────────
 void setup() {
   Serial.begin(115200);
-  
-  // Initialize LED pins
-  pinMode(LED_RED, OUTPUT);
-  pinMode(LED_YELLOW, OUTPUT);
-  pinMode(LED_GREEN, OUTPUT);
-  
-  // Start with LEDs off
-  digitalWrite(LED_RED, LOW);
-  digitalWrite(LED_YELLOW, LOW);
-  digitalWrite(LED_GREEN, LOW);
-
   rf_driver.init();
   ConnectToWIFI();
   Serial.println("RX Unit v2 Ready (Queue Mode).");
@@ -168,35 +150,11 @@ void loop() {
       String       deviceID   = payload.substring(0, firstComma);
       unsigned int recSeqNum  = payload.substring(firstComma + 1, secondComma).toInt();
       String       statusData = payload.substring(secondComma + 1);
-      
-      statusData.trim(); // Remove any hidden whitespace/newlines
 
       if (deviceID == EXPECTED_ID) {
-        // Accept if sequence is higher, OR if sequence is very low (meaning Tx likely restarted)
-        if (recSeqNum > lastSeqNum || recSeqNum <= 2) {
+        if (recSeqNum > lastSeqNum) {
           Serial.println("Validated [Seq:" + String(recSeqNum) + "]: " + statusData);
           lastSeqNum = recSeqNum;
-          
-          // Update local RYG LEDs
-          if (statusData == "RED") {
-            digitalWrite(LED_RED, HIGH);
-            digitalWrite(LED_YELLOW, LOW);
-            digitalWrite(LED_GREEN, LOW);
-          } else if (statusData == "YELLOW") {
-            digitalWrite(LED_RED, LOW);
-            digitalWrite(LED_YELLOW, HIGH);
-            digitalWrite(LED_GREEN, LOW);
-          } else if (statusData == "GREEN") {
-            digitalWrite(LED_RED, LOW);
-            digitalWrite(LED_YELLOW, LOW);
-            digitalWrite(LED_GREEN, HIGH);
-          } else {
-            // Turn off all if unknown status
-            digitalWrite(LED_RED, LOW);
-            digitalWrite(LED_YELLOW, LOW);
-            digitalWrite(LED_GREEN, LOW);
-          }
-
           enqueue(statusData); // ← Store in queue instead of direct upload
         } else {
           Serial.println("Blocked: Replay Attack. Seq=" + String(recSeqNum) + " Last=" + String(lastSeqNum));
